@@ -79,7 +79,7 @@ class VariablesConfig extends React.Component {
                 title: 'Actions',
                 key:'actions',
                 render:record=>{
-                    return <div style={{width:28, height:28,backgroundColor:"#fbbd08"}}>
+                    return <div style={{width:28, height:28,backgroundColor:"#fbbd08",borderRadius:5}}>
                                 <Icon style={{margin:6,color:"white"}} type="edit" />
                           </div>
                 }

@@ -1,7 +1,7 @@
 import React from "react";
 import { GroupMpListWrapper } from "./GroupMpList.style";
 
-import {Collapse, message, Table} from 'antd';
+import {Collapse, message, Table,Card} from 'antd';
 import Search from "antd/lib/input/Search";
 
 import  axios from 'axios'
@@ -351,30 +351,21 @@ class GroupMpList extends React.Component {
 
         return (
             <GroupMpListWrapper>
-                <Collapse
-                    bordered={false}
-                    defaultActiveKey={['1']}
-                    expandIcon={({ isActive }) => <Icon type="caret-right" rotate={isActive ? 90 : 0} />}
-                >
-                    <Panel
-                        header="Search by name"
-                        key="1"
-                        style={customPanelStyle}
-                        showArrow={false}>
+              <Card style={{width:1730,marginBottom:10}}>
+
                 <h2>Group MP List</h2>
                 <h4>Search by name</h4>
                 <Search style={{ marginBottom:20,width:200}} placeholder="search by name....."/>
-              <div>
+              </Card>
+              <Card style={{width:1730}}>
                   <Table
                       columns={columns}
                       dataSource={this.state.dataTable}
                       bordered
                       size="middle"
-
                   />
-              </div>
-                    </Panel>
-                </Collapse>
+              </Card>
+
             </GroupMpListWrapper>
         );
     }

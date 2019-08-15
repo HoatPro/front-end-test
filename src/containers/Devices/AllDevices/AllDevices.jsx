@@ -1,6 +1,7 @@
 import React from "react";
-import { Table, message, Tag } from 'antd';
+import { Table, message, Card,Icon } from 'antd';
 import axios from "axios";
+import Search from "antd/lib/input/Search";
 
 class AllDevice extends React.Component {
     constructor(props){
@@ -171,19 +172,39 @@ class AllDevice extends React.Component {
             {
                 title: 'Action',
                 key: 'choice',
+                render:record=>{
+                    return(<div >
+                        <Icon type="edit" style={{ width:26, height:26,backgroundColor:"#fbbd08",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>
+                        <Icon type="clock-circle"  style={{ width:26, height:26,backgroundColor:"#00b5ad",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>
+                        <Icon type="delete"  style={{ width:26, height:26,backgroundColor:"#db2828",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>
+                    </div>)
+                }
 
             },
         ];
 
         return (
+           <div>
+               <Card style={{width:"100%", marginBottom:20}}>
+                   <h2> All Devices</h2>
+                   <div  style={{width:200}}>
+                       <h4 > Search by name...</h4>
+                       <Search style={{width:180}} placeholder="Search by name..."/>
+                   </div>
+               </Card>
+               <Card style={{width:"100%"}}>
+                   <Table
+                       className="table-detail"
+                       columns={columns}
+                       dataSource={this.state.dataTable}
+                       bordered
+                       rowKey={record => record.index}
+                   />
 
-            <Table
-                className="table-detail"
-                columns={columns}
-                dataSource={this.state.dataTable}
-                bordered
-                rowKey={record => record.index}
-            />
+               </Card>
+           </div>
+
+
         )
     }
 }

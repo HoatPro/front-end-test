@@ -5,7 +5,7 @@ export default class Footer extends React.Component {
   render() {
     return (
       <FooterWrapper>
-      FPT TELECOM
+     <p style={{fontWeight:600}}> FPT TELECOM</p>
       </FooterWrapper>
     );
   }

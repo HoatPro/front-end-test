@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import {message, DatePicker, Select, Button, Table, Form, Modal, Input} from "antd";
+import {message, DatePicker, Select, Card, Table, Form, Modal, Input} from "antd";
 import Search from "antd/lib/input/Search";
 
 
@@ -66,14 +66,19 @@ class IRBDetail extends React.Component {
          if(res.status){
              message.success('GET detail Group MP successfully!');
            const dataNew=res.data.data[0].data;
-             const dataObj=dataNew.map((dt,index)=>{
-                 return {
-                     "index":index+1,
-                     dt
+           const dataTable=[];
+            dataNew.map((dt,index)=>{
+                 if(dt.bgpV4!=null&&dt.bgpV6!=null) {
+                     dataTable.push(
+                         {
+                             index:index,
+                             dt
+                         }
+                     )
                  }
              })
              this.setState({
-                 dataTable:dataObj
+                 dataTable:dataTable
              })
          }
      })
@@ -87,7 +92,6 @@ render() {
         children.push(<Option key={index}>{list.dt.toString()}</Option>);
     });
     const {dataTable}=this.state;
-
     const columns = [
         {
             title: 'Irb',
@@ -105,7 +109,7 @@ render() {
         },
         {
             title: 'Gateway',
-            key: 'checkat',
+            key: 'gateway',
             render: record => {
                 return record.dt.hostName
             }
@@ -113,22 +117,22 @@ render() {
         },
         {
             title: 'BGP v4',
-            key: 'uplink',
+            key: 'bgpv4',
             render: record => {
                 if(record.dt.bgpV4===null){
                     return null
                 }
-                return record.dt.bgpV4.export
+                return record.dt.bgpV4.export.replace("-Export", "")
             }
         },
         {
             title: 'BGP v6',
-            key: 'downlink',
+            key: 'bgpv6',
             render: record => {
                 if(record.dt.bgpV6===null){
                     return null
                 }
-                return record.dt.bgpV6.export
+                return record.dt.bgpV6.export.replace("-Export", "")
             }
         },
         {
@@ -140,7 +144,7 @@ render() {
         },
         {
             title: 'Traffic out',
-            key: 'b2b',
+            key: 'traffic-out',
             render:record=>{
                 return <div>{record.dt.totalTrafficOut} Mb ({record.dt.percentTrafficOut}%)</div>
             }
@@ -148,38 +152,39 @@ render() {
     ]
         return (
             <div className="page-center">
-                <div className="irb-detail" style={{width:"100%",marginBottom:20}}>
-                    <div style={{width:200, marginRight:20}} >
-                        <h4 > Search by name...</h4>
-                        <Search  placeholder="Search by name..."/>
+                <Card style={{width:"100%"}}>
+                    <div className="irb-detail" style={{width:"100%",marginBottom:20}}>
+                        <div style={{width:200, marginRight:60, float:"left"}} >
+                            <h4 > Search by name...</h4>
+                            <Search  placeholder="Search by name..."/>
+                        </div>
+                        <div style={{width:200, float:"left"}} >
+                            <h4>Choose log date</h4>
+                            <DatePicker
+                                onChange={this.onChange}
+                                format={dateFormat}
+                            />
+                        </div>
+                        <div style={{width:200, float:"right", marginRight:800}}>
+                            <h4> Search by time</h4>
+                            <Select
+                                style={{ width: '100%' }}
+                                defaultValue={"all"}
+                                onChange={this.handleChange}
+                            >
+                                {children}
+                            </Select>
+                        </div>
                     </div>
-                    <div style={{width:200}} >
-                        <h4>Choose log date</h4>
-                        <DatePicker
-                            onChange={this.onChange}
-                            format={dateFormat}
-                        />
-                    </div>
-                    <div style={{width:200}}>
-                        <h4> Search by time</h4>
-                        <Select
-                            style={{ width: '100%' }}
-                            defaultValue={"all"}
-                            onChange={this.handleChange}
-                        >
-                            {children}
-                        </Select>
-                    </div>
-                </div>
-                     <div className="table" style={{top:20}}>
+                </Card>
+                     <Card >
                          <Table
-                             className="table-detail"
                              columns={columns}
                              dataSource={dataTable}
                              bordered
                              rowKey={record=>record.index}
                          />
-                     </div>
+                     </Card>
             </div>
         );
     }

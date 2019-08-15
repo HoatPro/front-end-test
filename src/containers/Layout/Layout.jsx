@@ -56,7 +56,7 @@ class Layout extends React.Component {
               <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} />
             </Button>
           </div>
-          <div className="content">{children}</div>
+          <div className="content" style={{backgroundColor:"#F9FAFB", width:"100%",padding:10}}>{children}</div>
           <div
             className="footer"
             style={{

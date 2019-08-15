@@ -1,5 +1,5 @@
 import React from "react";
-import {Collapse, DatePicker, Select, Button, message} from 'antd';
+import {Collapse, DatePicker, Select, Button, message,Card} from 'antd';
 import ReactEcharts from "echarts-for-react";
 import axios from "axios";
 import moment from 'moment';
@@ -9,6 +9,7 @@ const dateFormat = 'DD-MM-YYYY';
 class Chart extends React.Component {
     constructor(props) {
         super(props);
+
     }
 
     getOption = data => {
@@ -170,7 +171,8 @@ class TrafficChart  extends React.Component {
             valueType:["-1"],
             valueLocalLocation:["-1"],
             valueLocation:["-1"],
-            valueProvider:["-1"]
+            valueProvider:["-1"],
+            defaultActive:null
 
         }
     }
@@ -260,8 +262,7 @@ class TrafficChart  extends React.Component {
               this.setState({
                   dataGeneral:dataGet.general,
                   dataPremium:dataGet.premium,
-
-
+                  defaultActive:1
               })
           }else{
               message.error("GET data error!!!")
@@ -269,113 +270,130 @@ class TrafficChart  extends React.Component {
       })
 
     }
+    formatDate=(date)=> {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+
+        return [day, month, year].join('/');
+
+    }
 
     render() {
-      const {startValue,endValue,endOpen,dataGeneral,dataPremium}=this.state;
+      const {startValue,endValue,endOpen,dataGeneral,dataPremium,defaultActive}=this.state;
+      const today=moment(new Date())._d.toISOString();
+      const endDay=this.formatDate(today);
+      console.log(defaultActive)
         return (
             <div>
-                <h2>Traffic Chart</h2>
-                <Collapse defaultActiveKey={['1']}  >
-                    <Panel header="Filter" key="filter" style={{fontWeight:600}}>
-                        <div className="from_date" style={{ float:"left"}}>
-                            <h4 style={{fontWeight:"560"}}>From</h4>
-                            <DatePicker
-                                style={{marginRight:20}}
-                                disabledDate={this.disabledStartDate}
-                                format={dateFormat}
-                                value={startValue}
-                                placeholder="Start"
-                                onChange={this.onStartChange}
-                                onOpenChange={this.handleStartOpenChange}
-                            />
-                        </div>
-                        <div className="to_date">
-                            <h4 style={{fontWeight:"560"}}>To</h4>
-                            <DatePicker
-                                disabledDate={this.disabledEndDate}
-                                format={dateFormat}
-                                value={endValue}
-                                placeholder="End"
-                                onChange={this.onEndChange}
-                                open={endOpen}
-                                onOpenChange={this.handleEndOpenChange}
-                            />
-                        </div>
-                        <div>
-                            <h4 style={{fontWeight:"560"}}>Type</h4>
-                            <Select
-                                mode="multiple"
-                                style={{ width: '30%' }}
-                                onChange={this.handleChangeType}
-                                defaultValue={['All']}
-                                optionLabelProp="label"
-                            >
-                                <Option key="-1" label="All">All </Option>
-                                <Option key="Landline" label="Landline">Landline</Option>
-                                <Option key="submarine" label="submarine">submarine</Option>
-                            </Select>
-                        </div>
-                        <div>
-                            <h4 style={{fontWeight:"560"}}>Local location</h4>
-                            <Select
-                                mode="multiple"
-                                style={{ width: '30%' }}
-                                defaultValue={['All']}
-                                onChange={this.handleChangeLocalLocation}
-                                optionLabelProp="label"
-                            >
-                                <Option key="-1" label="All">All </Option>
-                                <Option key="Da+Nang" label="Da Nang">Da Nang</Option>
-                                <Option key="Ho+Chi+Minh" label="Ho Chi Minh">Ho Chi Minh</Option>
-                                <Option key="Ha+Noi" label="Ha Noi">Ha Noi</Option>
-                            </Select>
-                        </div>
-                        <div>
-                            <h4 style={{fontWeight:"560"}}>
-                                Location</h4>
-                            <Select
-                                mode="multiple"
-                                style={{ width: '30%' }}
-                                defaultValue={['All']}
-                                onChange={this.handleChangeLocation}
-                                optionLabelProp="label"
-                            >
-                                <Option key="-1" label="All">All </Option>
-                                <Option key="Singapore" label="Singapore">Singapore</Option>
-                                <Option key="Hongkong" label="Hongkong">Hong Kong</Option>
-                                <Option key="Japan" label="Japan">Japan</Option>
-                            </Select>
-                        </div>
-                        <div>
-                            <h4 style={{fontWeight:"560"}}>
-                                Provider</h4>
-                            <Select
-                                mode="multiple"
-                                style={{ width: '30%' }}
-                                defaultValue={['All']}
-                                onChange={this.handleChangeProvider}
-                                optionLabelProp="label"
-                            >
-                                <Option key="-1" label="All">All </Option>
-                                <Option key="APG" label="APG">APG</Option>
-                                <Option key="IA" label="IA">IA</Option>
-                                <Option key="AAE-1" label="AAE-1">AAE-1</Option>
-                                <Option key="AAG" label="AAG">AAG</Option>
-                                <Option key="CMI" label="CMI">CMI</Option>
-                                <Option key="CT" label="CT">CT</Option>
-                                <Option key="CU" label="CU">CU</Option>
-                            </Select>
-                        </div>
-                        <div style={{marginTop:10}}>
-                            <Button type="primary" onClick={this.handleSearch}>Search</Button>
-                        </div>
-                    </Panel>
-                </Collapse>
-                <div>
-                   <h2>IPLC Traffic</h2>
+                <Card style={{border:"20",backgroundColor:"#f7f7f7", padding:15}}>
+                    <h2>Traffic Chart</h2>
+                    <Collapse defaultActiveKey={['1']}  >
+                        <Panel header="Filter" key="1" style={{fontWeight:600}}>
+                            <div className="from_date" style={{ width:200,float:"left"}}>
+                                <h4 style={{fontWeight:"560"}}>From</h4>
+                                <DatePicker
+                                    style={{marginRight:20}}
+                                    disabledDate={this.disabledStartDate}
+                                    format={dateFormat}
+                                    value={startValue}
+                                    placeholder="Start"
+                                    onChange={this.onStartChange}
+                                    onOpenChange={this.handleStartOpenChange}
+                                />
+                            </div>
+                            <div className="to_date"  style={{ width:200,float:"left"}}>
+                                <h4 style={{fontWeight:"560"}}>To</h4>
+                                <DatePicker
+
+                                    disabledDate={this.disabledEndDate}
+                                    format={dateFormat}
+                                    value={endValue}
+                                    onChange={this.onEndChange}
+                                    open={endOpen}
+                                    onOpenChange={this.handleEndOpenChange}
+                                />
+                            </div>
+                            <div style={{float:"left",width:1000,marginRight:-500}} >
+                                <h4 style={{fontWeight:"560"}}>Type</h4>
+                                <Select
+                                    mode="multiple"
+                                    style={{ width: '47%' }}
+                                    onChange={this.handleChangeType}
+                                    defaultValue={['All']}
+                                    optionLabelProp="label"
+                                >
+                                    <Option key="-1" label="All">All </Option>
+                                    <Option key="Landline" label="Landline">Landline</Option>
+                                    <Option key="submarine" label="submarine">submarine</Option>
+                                </Select>
+                            </div>
+                            <div>
+                                <h4 style={{fontWeight:"560",width:1000}}>Local location</h4>
+                                <Select
+                                    mode="multiple"
+                                    style={{ width: '30%' }}
+                                    defaultValue={['All']}
+                                    onChange={this.handleChangeLocalLocation}
+                                    optionLabelProp="label"
+                                >
+                                    <Option key="-1" label="All">All </Option>
+                                    <Option key="Da+Nang" label="Da Nang">Da Nang</Option>
+                                    <Option key="Ho+Chi+Minh" label="Ho Chi Minh">Ho Chi Minh</Option>
+                                    <Option key="Ha+Noi" label="Ha Noi">Ha Noi</Option>
+                                </Select>
+                            </div>
+                            <div style={{float:"left", width:1000, marginRight:-600}}>
+                                <h4 style={{fontWeight:"560"}}>
+                                    Location</h4>
+                                <Select
+                                    mode="multiple"
+                                    style={{ width: '37.55%' }}
+                                    defaultValue={['All']}
+                                    onChange={this.handleChangeLocation}
+                                    optionLabelProp="label"
+                                >
+                                    <Option key="-1" label="All">All </Option>
+                                    <Option key="Singapore" label="Singapore">Singapore</Option>
+                                    <Option key="Hongkong" label="Hongkong">Hong Kong</Option>
+                                    <Option key="Japan" label="Japan">Japan</Option>
+                                </Select>
+                            </div>
+                            <div>
+                                <h4 style={{fontWeight:"560"}}>
+                                    Provider</h4>
+                                <Select
+                                    mode="multiple"
+                                    style={{ width: '32.5%' }}
+                                    defaultValue={['All']}
+                                    onChange={this.handleChangeProvider}
+                                    optionLabelProp="label"
+                                >
+                                    <Option key="-1" label="All">All </Option>
+                                    <Option key="APG" label="APG">APG</Option>
+                                    <Option key="IA" label="IA">IA</Option>
+                                    <Option key="AAE-1" label="AAE-1">AAE-1</Option>
+                                    <Option key="AAG" label="AAG">AAG</Option>
+                                    <Option key="CMI" label="CMI">CMI</Option>
+                                    <Option key="CT" label="CT">CT</Option>
+                                    <Option key="CU" label="CU">CU</Option>
+                                </Select>
+                            </div>
+                            <div style={{marginTop:10}}>
+                                <Button type="primary" onClick={this.handleSearch}>Search</Button>
+                            </div>
+                        </Panel>
+                    </Collapse>
+                </Card>
+                <Card style={{border:"20",backgroundColor:"#f7f7f7",marginTop:20,padding:15}}>
+                   <h2 >IPLC Traffic</h2>
                    <div>
-                       <Collapse   >
-                           <Panel header="General" key="general" style={{fontWeight:600}}>
+                       <Collapse defaultActiveKey={[`${defaultActive}`]} >
+                           <Panel header="General" key="1" style={{fontWeight:600}}>
                                <div  >
                                    <Chart  data={dataGeneral} service='General'/>
                                </div>
@@ -392,7 +410,7 @@ class TrafficChart  extends React.Component {
                             </Panel>
                         </Collapse>
                     </div>
-               </div>
+               </Card>
 
             </div>
 

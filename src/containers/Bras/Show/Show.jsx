@@ -1,10 +1,10 @@
 import React from "react";
 import { ShowWrapper } from "./Show.style";
 import axios from "axios";
-import {message,Select,Collapse,Input,Button} from "antd";
+import {message,Select,Input,Card} from "antd";
 import TableMP from './TableMP';
-const {Panel}=Collapse;
-const { Search } = Input;
+
+
 
 const { Option } = Select;
 const customPanelStyle = {
@@ -80,16 +80,8 @@ render() {
 
         return (
             <ShowWrapper>
-                <Collapse
-                    bordered={false}
-                    defaultActiveKey={['1']}
-                    expandIcon={({ isActive }) => <Icon type="caret-right" rotate={isActive ? 90 : 0} />}
-                >
-                    <Panel
-                        header="Search by name"
-                        key="1"
-                        style={customPanelStyle}
-                        showArrow={false}>
+                       <Card style={{width:"100%", marginBottom:10}}>
+                           <h4> Search by name</h4>
                         <Select
                             showSearch
                             style={{ width: 200,marginBottom:20 }}
@@ -103,11 +95,12 @@ render() {
                         >
                             {children}
                         </Select>
+                       </Card>
+                <Card>
                         <TableMP
                             nameMp={nameSelected}
                         />
-                    </Panel>
-                </Collapse>
+                       </Card>
             </ShowWrapper>
         );
     }

@@ -1,9 +1,9 @@
 import React from "react";
-import {Table, message, Button, Modal, Form, Input} from 'antd';
+import {Table, message, Button, Modal, Form, Input, Card} from 'antd';
 import axios from "axios";
 import Icon from "antd/lib/icon";
-import TableRoom from "../Warehouse/Rooms";
-
+import TableRoom from "./Rooms";
+const {Search}=Input;
 const CreateForm = Form.create({ name: 'form_in_modal' })(
     // eslint-disable-next-line
     class extends React.Component {
@@ -38,7 +38,10 @@ class AreasAndRoom extends React.Component {
         super(props);
         this.state={
             dataTable:[],
-            visiable:false
+            visiable:false,
+            idSelected:null,
+            nameRoom:"",
+            styleColor:"#9CE0AF"
         }
     }
     async componentDidMount(){
@@ -52,7 +55,6 @@ class AreasAndRoom extends React.Component {
         } = await axios(options);
         if(status){
             message.success("GET NET Areas successfull!");
-            console.log(data);
             const dataObj=data.map((dt,index)=>{
                 return {
                     "index":index+1,
@@ -93,7 +95,17 @@ class AreasAndRoom extends React.Component {
     saveFormRef = formRef => {
         this.formRef = formRef;
     };
+    //Show data
+    showAera=(id,name)=>{
+        this.setState({
+            idSelected:id,
+            nameRoom:name,
+            styleColor:"#16AB39"
+        })
+    }
     render() {
+        const{idSelected,dataTable,nameRoom,styleColor}=this.state;
+        console.log(idSelected)
         const columns = [
             {
                 title: '#',
@@ -113,9 +125,13 @@ class AreasAndRoom extends React.Component {
                 render:record => {
                     return(
                         <div>
-                            <Icon type="eye"  style={{margin:5, padding:1,width:16,height:16,background:"cadetblue",color:"white"}}/>
-                            <Icon  type="form" style={{margin:5, padding:1,width:16,height:16,background:"orange",color:"white"}}></Icon>
-                            <Icon type="delete" style={{margin:5, padding:1,width:16,height:16,background:"red",color:"white"}} ></Icon>
+                            <Icon
+                                type="eye"
+                                style={{ width:26, height:26,backgroundColor:"#fbbd08",padding:5,color:"white",fontWeight:700,borderRadius:5}}
+                                onClick={()=>this.showAera(record.dt.id,record.dt.name)}
+                            />&nbsp;
+                            <Icon type="edit"  style={{ width:26, height:26,backgroundColor:"#00b5ad",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>&nbsp;
+                            <Icon type="delete"  style={{ width:26, height:26,backgroundColor:"#db2828",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>
                         </div>
                     )
                 }
@@ -125,9 +141,13 @@ class AreasAndRoom extends React.Component {
 
         return (
            <div>
-              <div className="areas" style={{width:"50%",float:"left"}}>
+              <Card className="areas" style={{width:"60%",float:"left"}}>
                   <h1>Areas</h1>
-                  <Button type="primary" style={{marginBottom:20}} onClick={this.showModal}> + Create </Button>
+                  <Button style={{marginBottom:20,backgroundColor:"#16AB39",color:"white", fontWeight:600}} onClick={this.showModal}> + Create </Button>
+                  <div style={{float:"right", marginBottom:20, marginTop:-30}}>
+                      <h4>Search</h4>
+                      <Search placeholder="Search Aera by name..."/>
+                  </div>
                   <CreateForm
                       wrappedComponentRef={this.saveFormRef}
                       visible={this.state.visible}
@@ -137,19 +157,19 @@ class AreasAndRoom extends React.Component {
                   <Table
                       className="table-detail"
                       columns={columns}
-                      dataSource={this.state.dataTable}
+                      dataSource={dataTable}
                       bordered
                       // pagination={this.state.pagination}
                       // loading={this.state.loading}
                       // onChange={this.handleTableChange}
                       rowKey={record => record.index}
                   />
-              </div>
-               <div className="Room" style={{width:"40%",marginLeft:50,float:"right"}} >
-                 <h1>Rooms of </h1>
-                   <Button type="primary" style={{marginBottom:20}} > + Create</Button>
-                   <TableRoom />
-               </div>
+              </Card>
+               <Card className="Room" style={{width:"37%",marginLeft:40,float:"right"}} >
+                 <h1>Rooms of {nameRoom} </h1>
+                   <Button style={{marginBottom:20,backgroundColor:`${styleColor}`,color:"white", fontWeight:600}} > + Create</Button>
+                   <TableRoom idSelected={idSelected} dataTable={dataTable}/>
+               </Card>
            </div>
 
         )

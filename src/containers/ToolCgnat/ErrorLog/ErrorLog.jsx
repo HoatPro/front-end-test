@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, DatePicker, Button } from 'antd';
+import { Table, DatePicker, Button,Card } from 'antd';
 import axios from "axios";
 
 
@@ -145,39 +145,41 @@ class ErrorLog extends React.Component {
 
         return (
          <div>
-             <div className="selection_date" style={{ marginBottom:20}}>
-                 <h2 style={{fontWeight:"640"}}>Error Log</h2>
-               <div className="from_date" style={{ float:"left"}}>
-                   <h4 style={{fontWeight:"560"}}>From</h4>
-                   <DatePicker
-                       style={{marginRight:20}}
-                       disabledDate={this.disabledStartDate}
-                       showTime
-                       format="YYYY-MM-DD "
-                       value={startValue}
-                       placeholder="Start"
-                       onChange={this.onStartChange}
-                       onOpenChange={this.handleStartOpenChange}
-                   />
-               </div>
-                 <div className="to_date">
-                     <h4 style={{fontWeight:"560"}}>To</h4>
-                     <DatePicker
-                         disabledDate={this.disabledEndDate}
-                         showTime
-                         format="YYYY-MM-DD "
-                         value={endValue}
-                         placeholder="End"
-                         onChange={this.onEndChange}
-                         open={endOpen}
-                         onOpenChange={this.handleEndOpenChange}
-                     />
+             <Card  style={{ width: "100%",fontWeight:600, marginBottom:15 }}>
+                 <div className="selection_date" style={{ marginBottom:20}}>
+                     <h2 style={{fontWeight:"640"}}>Error Log</h2>
+                     <div className="from_date" style={{ float:"left"}}>
+                         <h4 style={{fontWeight:"560"}}>From</h4>
+                         <DatePicker
+                             style={{marginRight:20}}
+                             disabledDate={this.disabledStartDate}
+                             showTime
+                             format="YYYY-MM-DD "
+                             value={startValue}
+                             placeholder="Start"
+                             onChange={this.onStartChange}
+                             onOpenChange={this.handleStartOpenChange}
+                         />
+                     </div>
+                     <div className="to_date">
+                         <h4 style={{fontWeight:"560"}}>To</h4>
+                         <DatePicker
+                             disabledDate={this.disabledEndDate}
+                             showTime
+                             format="YYYY-MM-DD "
+                             value={endValue}
+                             placeholder="End"
+                             onChange={this.onEndChange}
+                             open={endOpen}
+                             onOpenChange={this.handleEndOpenChange}
+                         />
+                     </div>
+                     <div className="table-to-excel" style={{float:"right", marginTop:-33,marginRight:900}}>
+                         <Button type="primary"> Export to excel</Button>
+                     </div>
                  </div>
-                 <div className="table-to-excel" style={{float:"right", marginTop:-33,marginRight:1000}}>
-                  <Button type="primary"> Export to excel</Button>
-             </div>
-             <div className="table">
-
+             </Card>
+                 <Card  style={{ width: "100%",marginBottom:20 }}>
                  <Table
                      style={{marginTop:20}}
                      id="table-detail"
@@ -188,9 +190,7 @@ class ErrorLog extends React.Component {
                      // pagination={{ defaultPageSize: 20}}
                      rowKey={record => record.index}
                  />
-             </div>
-             </div>
-
+                 </Card>
          </div>
 
         )

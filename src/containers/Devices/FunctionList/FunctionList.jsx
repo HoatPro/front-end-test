@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Button, Icon ,Modal,Form,Input, message} from 'antd';
+import { Table, Button, Icon ,Modal,Form,Input, message, Card} from 'antd';
 import axios from "axios";
 import Search from "antd/lib/input/Search";
 const CreateForm = Form.create({ name: 'form_in_modal' })(
@@ -203,14 +203,14 @@ class FunctionList extends React.Component {
                 render:record=>{
                    return (
                        <div>
-                           <Icon type="form"  style={{marginRight:8,color:"olive"}} onClick={()=>this.showModalEdit(record.index)}/>
+                           <Icon type="form" style={{ width:26, height:26,backgroundColor:"#fbbd08",padding:5,color:"white",fontWeight:700,borderRadius:5}} onClick={()=>this.showModalEdit(record.index)}/>&nbsp;
                            <EditForm
                                wrappedComponentRef={this.saveFormRef}
                                visible={this.state.visibleEdit}
                                onCancel={this.handleCancelEdit}
                                onEdit={this.handleEdit}
                            />
-                           <Icon type="delete"  style={{color:"red"}} onClick={this.showModalDelete}/>
+                           <Icon type="delete" style={{ width:26, height:26,backgroundColor:"#db2828",padding:5,color:"white",fontWeight:700,borderRadius:5}} onClick={this.showModalDelete}/>
                            <Modal
                                title="Delete Function"
                                visible={this.state.visiableDelete}
@@ -229,9 +229,10 @@ class FunctionList extends React.Component {
 
         return (
              <div>
-                 <div style={{marginBottom:20}}>
+                 <Card style={{ width:"100%",marginBottom:20}}>
+                 <div>
                      <h2>Function List</h2>
-                     <Button type="primary"  onClick={this.showModal}> + Create</Button>
+                     <Button style={{backgroundColor:"#21ba45",color:"white", fontWeight:600}} onClick={this.showModal}> + Create</Button>
                      <CreateForm
                          wrappedComponentRef={this.saveFormRef}
                          visible={this.state.visible}
@@ -240,6 +241,8 @@ class FunctionList extends React.Component {
                      />
                          <Search placeholder="Search Function" style={{float:"right", width:300}}></Search>
                  </div>
+                 </Card>
+                 <Card>
                  <Table
                      className="table-detail"
                      columns={columns}
@@ -247,6 +250,7 @@ class FunctionList extends React.Component {
                      bordered
                      rowKey={record => record.netDeviceFunctionId}
                  />
+                 </Card>
              </div>
 
         )

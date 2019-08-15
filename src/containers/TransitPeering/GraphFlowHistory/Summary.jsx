@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, DatePicker, InputNumber,Input ,Button} from 'antd';
+import { Table, DatePicker, InputNumber,Input ,Button, Card} from 'antd';
 const InputGroup=Input.Group;
 import axios from "axios";
 import moment from "moment";
@@ -160,7 +160,7 @@ class Summary extends React.Component {
 
         return (
             <div>
-                <div className="selection_date" style={{ marginBottom:20}}>
+                <Card className="selection_date" style={{ marginBottom:20}}>
                     <h2 style={{fontWeight:"640"}}>IRB</h2>
                     <div className="from_date" style={{ float:"left"}}>
                         <h4 style={{fontWeight:"560"}}>From</h4>
@@ -227,7 +227,7 @@ class Summary extends React.Component {
                             rowKey={record => record.index}
                         />
                     </div>
-                </div>
+                </Card>
 
             </div>
 

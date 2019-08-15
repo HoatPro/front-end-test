@@ -1,5 +1,5 @@
 import React from "react";
-import {Table, Icon, Button, Form, Modal, Input,Select} from 'antd';
+import {Table, Icon, Button, Form, Modal, Input,Select,Card} from 'antd';
 import axios from "axios";
 const { Option } = Select
 const CreateForm = Form.create({ name: 'form_in_modal' })(
@@ -168,13 +168,9 @@ class LogConfig extends React.Component {
                 title: 'Actions',
                 key:'actions',
                 render:record=>{
-                    return (<div>
-                        <div style={{width:28, height:28,backgroundColor:"#fbbd08"}}>
-                            <Icon style={{margin:6,color:"white"}} type="edit" />
-                        </div>
-                        <div style={{width:28, height:28,backgroundColor:"#db2828"}}>
-                            <Icon style={{margin:6,color:"white"}} type="edit" />
-                        </div>
+                    return(<div >
+                        <Icon type="edit" style={{ width:26, height:26,backgroundColor:"#fbbd08",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>&nbsp;
+                        <Icon type="delete"  style={{ width:26, height:26,backgroundColor:"#db2828",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>
                     </div>)
                 }
 
@@ -187,7 +183,7 @@ class LogConfig extends React.Component {
 
         return (
             <div>
-                <div>
+                <Card  style={{ width: "100%",fontWeight:600, marginBottom:15 }}>
                     <h2>LogConfig</h2>
                     <Button style={{ backgroundColor:"#21ba45", color:"white"}} onClick={this.showModal}> + Create log</Button>
                     <CreateForm
@@ -196,7 +192,7 @@ class LogConfig extends React.Component {
                         onCancel={this.handleCancel}
                         onCreate={this.handleCreate}
                     />
-                </div>
+                </Card>
 
                 <div className="table" >
                     <Table

@@ -1,10 +1,8 @@
 import React from "react";
-import {Table, message} from 'antd';
+import {Table, message,Card} from 'antd';
 
 import axios from "axios";
 import Search from "antd/lib/input/Search";
-
-const {Column, ColumnGroup} = Table;
 
 class IplcMpopByGwIpv6 extends React.Component {
     constructor(props) {
@@ -26,46 +24,124 @@ class IplcMpopByGwIpv6 extends React.Component {
         } = await axios(options);
         if (status) {
             message.success("GET data successfull!");
+            const dataObj=data.map((data,index)=>{
+                return {
+                    index:index,
+                    data
+                }
+            })
             this.setState({
-                dataTable: data
+                dataTable: dataObj
             })
         }else {message.error("GET data Error!!!")}
     }
 
     render() {
+        const columns = [
+            {
+                title: 'Ingress Device',
+                key: 'name',
+                render:record=>{
+                    return record.data.name
+                }
+            },
+            {
+                title: 'IPLC-Interface',
+                key: 'iplcinterface',
+                render:record=>{
+                    return record.data.interfaceName
+                }
+            },
+            {
+                title: 'IP next-hop',
+                key: 'ip-next-hop',
+                render:record=>{
+                   return(
+                       <ul style={{listStyle:"none"}}>
+                               {record.data.listIpv6.map((item,index)=>{
+                                  return(
+                                      <li key={index}>
+                                          { item.ipNextHop}
+                                      </li>
+                                  )
+                               })}
+
+                       </ul>
+                   )
+                }
+            },
+            {
+                title: 'MP/CGNAT',
+                key: 'mp-cnat',
+                render:record=>{
+                    return(
+                        <ul style={{listStyle:"none"}}>
+                            {record.data.listIpv6.map((item,index)=>{
+                                return(
+                                    <li key={index}>
+                                        { item.nameNextHop}
+                                    </li>
+                                )
+                            })}
+
+                        </ul>
+                    )
+                }
+
+            },
+            {
+                title: 'Detail',
+                key: 'detail',
+                render:record=>{
+                    return(
+                        <ul style={{listStyle:"none"}}>
+                            {record.data.listIpv6.map((item,index)=>{
+                                return(
+                                    <li key={index}>
+                                        <b>Ipv6: </b> { item.ipv6} <b> - Traffic: </b> { item.traffic }<br/>
+                                    </li>
+                                )
+                            })}
+
+                        </ul>
+                    )
+                }
+
+            },
+
+
+
+            {
+                title: 'MP/CGNAT-Rate(G)',
+                key: 'mp-cgnat-rate',
+                render:record=>{
+                    let rate =Math.round(record.data.trafficKentik/1024, 2)
+                    return rate
+                }
+
+
+            },
+        ];
       const {dataTable}=this.state;
       console.log(dataTable);
         return (
             <div>
-                <div>
+                <Card style={{marginBottom:20}}>
                     <h2>
-                        Equal
+                        IPLC MPOP by GW
                     </h2>
                     <h4>Search by name</h4>
-                    <Search style={{width: 300, marginTop: 8, marginBottom: 30}}/>
-                </div>
-                <div>
-                    <Table dataSource={this.state.dataTable} bordered>
-
-                        <Column title="Ingress Device" dataIndex="name" key="name"/>
-                        <Column title="IPLC-Interface" dataIndex="interfaceName" key="interfaceName"/>
-                       {/* <Column*/}
-                       {/*     title="Tags"*/}
-                       {/*     dataIndex="tags"*/}
-                       {/*     key="tags"*/}
-                       {/*     render={tags => (*/}
-                       {/*         <span>*/}
-                       {/*{tags.map(tag => (*/}
-                       {/*  <Tag color="blue" key={tag}>*/}
-                       {/*          {tag}*/}
-                       {/*             </Tag>*/}
-                       {/*            ))}*/}
-                       {/*               </span>*/}
-                       {/*     )}*/}
-                       {/* />*/}
-
-                    </Table>
-                </div>
+                    <Search style={{width: 300, marginTop: 8, marginBottom: 30}} placeholder="Search by name..."/>
+                </Card>
+                <Card>
+                    <Table
+                    className="table-detail"
+                    columns={columns}
+                    dataSource={this.state.dataTable}
+                    bordered
+                    rowKey={record => record.index}
+                />
+                </Card>
             </div>
 
         )

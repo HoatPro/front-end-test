@@ -1,7 +1,5 @@
-
 import React from "react";
-import { Table ,message} from 'antd';
-
+import { Table ,message, Card} from 'antd';
 import axios from "axios";
 import Search from "antd/lib/input/Search";
 
@@ -25,8 +23,14 @@ class IplcReport extends React.Component {
         } = await axios(options);
         if(status){
             message.success("GET data successfull!")
+            const dataObj=data.map((data,index)=>{
+                return {
+                    index:index,
+                    data
+                }
+            })
             this.setState({
-                dataTable:data
+                dataTable:dataObj
             })
         }
     }
@@ -35,41 +39,63 @@ class IplcReport extends React.Component {
         const columns = [
             {
                 title: 'Ingress Device',
-                dataIndex: 'name',
                 key: 'name',
+                render:record=>{
+                    return record.data.name
+                }
             },
             {
                 title: 'IPLC-Interface',
-                dataIndex: 'interfaceName',
-                key: 'ipv6',
+                key: 'iplcinterface',
+                render:record=>{
+                    return record.data.interfaceName
+                }
 
             },
             {
                 title: 'IPLC-Rate(G)',
-                dataIndex: '',
-                key: 'ipNextHop',
+                key: 'iplcrate',
+                render:record=>{
+                    let rate = Math.round(record.data.trafficOut/1024, 2);
+                    return rate
+                }
+
 
             },
             {
                 title: 'IPLC-Speed (G)',
-                dataIndex: 'speed',
                 key: 'speed',
+                render:record=>{
+                    return record.data.speed
+                }
 
             },
             {
                 title: 'IPLC-Congest',
-                key: 'nameNextHop',
+                key: 'ip-congest',
+                render:record=>{
+                    let rate = Math.round(record.data.trafficOut/1024, 2);
+                    return (0.8*record.data.speed -rate).toFixed(2)
+                }
+
 
             },
             {
                 title: 'IPLC-Free',
-                key: 'nameNextHop',
+                key: 'iplc-free',
+                render:record=>{
+                    let rate = Math.round(record.data.trafficOut/1024, 2);
+                    return (0.75*record.data.speed -rate).toFixed(2)
+                }
+
 
             },
             {
                 title: 'IPLC-SMC',
-                dataIndex:"neighborName",
                 key: 'nameNextHop',
+                render:record=>{
+                    return record.data.neighborName
+                }
 
             },
 
@@ -78,24 +104,22 @@ class IplcReport extends React.Component {
 
         return (
             <div>
-                <div>
+                <Card style={{marginBottom:20}}>
                     <h2>
                         IPLC
                     </h2>
                     <h4>Search by name</h4>
-                    <Search style={{width:300,marginTop:8,marginBottom:30}}/>
-                </div>
-                <div>
+                    <Search style={{width:300,marginTop:8,marginBottom:30}} placeholder="Search by name..."/>
+                </Card>
+                <Card>
                     <Table
                         className="table-detail"
                         columns={columns}
                         dataSource={this.state.dataTable}
                         bordered
-
-                        // pagination={{ defaultPageSize: 20}}
-                        // rowKey={record => record.index}
+                        rowKey={record => record.index}
                     />
-                </div>
+                </Card>
             </div>
 
         )

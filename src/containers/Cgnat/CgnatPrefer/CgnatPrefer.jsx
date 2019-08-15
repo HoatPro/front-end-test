@@ -1,19 +1,10 @@
 
 import React from "react";
-import { Table ,message,Collapse,Icon,Button,Input} from 'antd';
+import { Table ,message,Card,Icon,Button,Input} from 'antd';
 import { CgnatPreferWrapper } from "./CgnatPrefer.style";
 import axios from "axios";
-const {Panel}=Collapse;
 const { Search } = Input;
 
-
-const customPanelStyle = {
-    background: '#f7f7f7',
-    borderRadius: 4,
-    marginBottom: 24,
-    border: 0,
-    overflow: 'hidden',
-};
 class CgnatPrefer extends React.Component {
     constructor(props){
         super(props);
@@ -110,16 +101,8 @@ class CgnatPrefer extends React.Component {
         return (
             <CgnatPreferWrapper>
 
-                <Collapse
-                    bordered={false}
-                    defaultActiveKey={['1']}
-                    expandIcon={({ isActive }) => <Icon type="caret-right" rotate={isActive ? 90 : 0} />}
-                >
-                    <Panel
-                        header=" CGNAT Prefer"
-                        key="1"
-                        style={customPanelStyle}
-                        showArrow={false}>
+                <Card style={{marginBottom:10}}>
+
                         <Search
                             placeholder="Search by name..."
                             onSearch={value => console.log(value)}
@@ -127,9 +110,8 @@ class CgnatPrefer extends React.Component {
                         />
                         <Button type="primary">Export to excel</Button>
 
-                    </Panel>
-                </Collapse>
-                <div className="table">
+                </Card>
+                <Card>
                     <Table
                         className="table-detail"
                         columns={columns}
@@ -138,7 +120,7 @@ class CgnatPrefer extends React.Component {
                         // pagination={{ defaultPageSize: 20}}
                         rowKey={record => record.index}
                     />
-                </div>
+                </Card>
             </CgnatPreferWrapper>
 
         )

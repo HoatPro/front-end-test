@@ -1,9 +1,5 @@
-
-
-
-
 import React from "react";
-import { Table ,message} from 'antd';
+import { Table ,message, Card} from 'antd';
 
 import axios from "axios";
 import Search from "antd/lib/input/Search";
@@ -77,14 +73,14 @@ class Ipv6ToMpop extends React.Component {
 
         return (
                        <div>
-                           <div>
+                           <Card style={{marginBottom:20}}>
                                <h2>
                                    Ipv6 to MPOP
                                </h2>
                                <h4>Search by name</h4>
-                               <Search style={{width:300,marginTop:8,marginBottom:30}}/>
-                           </div>
-                           <div>
+                               <Search style={{width:300,marginTop:8,marginBottom:30}} placeholder="Search by name..."/>
+                           </Card>
+                           <Card>
                                <Table
                                    className="table-detail"
                                    columns={columns}
@@ -93,7 +89,7 @@ class Ipv6ToMpop extends React.Component {
                                    // pagination={{ defaultPageSize: 20}}
                                    rowKey={record => record.index}
                                />
-                           </div>
+                           </Card>
                        </div>
 
         )

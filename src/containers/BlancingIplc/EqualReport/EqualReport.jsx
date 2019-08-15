@@ -1,8 +1,9 @@
 import React from "react";
-import { Table ,message} from 'antd';
+import { Table ,message,Card} from 'antd';
 
 import axios from "axios";
 import Search from "antd/lib/input/Search";
+
 
 
 class EqualReport extends React.Component {
@@ -45,8 +46,11 @@ class EqualReport extends React.Component {
             },
             {
                 title: 'Equal-Rate(G)',
-                dataIndex: '',
                 key: 'ipNextHop',
+                render:record=>{
+                    let rate = Math.round(record.trafficOut/1024, 2)
+                   return rate
+                }
 
             },
             {
@@ -57,18 +61,26 @@ class EqualReport extends React.Component {
             },
             {
                 title: 'Equal-Congest',
-                key: 'nameNextHop',
+                key: 'eqaul-congest',
+                render:record => {
+                    let rate = Math.round(record.trafficOut/1024, 2)
+                    return (0.8*record.speed - rate).toFixed(2)
+                }
 
             },
             {
                 title: 'Equal-Free',
-                key: 'nameNextHop',
+                key: 'equal-free',
+                render:record => {
+                    let rate = Math.round(record.trafficOut/1024, 2)
+                    return (0.75*record.speed- rate).toFixed(2)
+                }
 
             },
             {
                 title: 'Equal-Device',
                 dataIndex:"neighborName",
-                key: 'nameNextHop',
+                key: 'equal-device',
 
             },
 
@@ -77,24 +89,22 @@ class EqualReport extends React.Component {
 
         return (
             <div>
-                <div>
+                <Card style={{marginBottom:20}}>
                     <h2>
                        Equal
                     </h2>
                     <h4>Search by name</h4>
-                    <Search style={{width:300,marginTop:8,marginBottom:30}}/>
-                </div>
-                <div>
+                    <Search style={{width:300,marginTop:8,marginBottom:30}} placeholder="Search by name..."/>
+                </Card>
+                <Card>
                     <Table
                         className="table-detail"
                         columns={columns}
                         dataSource={this.state.dataTable}
                         bordered
-
-                        // pagination={{ defaultPageSize: 20}}
-                        // rowKey={record => record.index}
+                        // rowKey={record => record.name}
                     />
-                </div>
+                </Card>
             </div>
 
         )

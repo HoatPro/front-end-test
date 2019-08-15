@@ -1,6 +1,5 @@
 import React from "react";
-import { Table, DatePicker } from 'antd';
-import TableToExcel from 'react-html-table-to-excel';
+import { Table, Card } from 'antd';
 import axios from "axios";
 
 class History extends React.Component {
@@ -170,25 +169,25 @@ class History extends React.Component {
 
         return (
             <div>
-                <div>
+                <Card  style={{fontWeight:600, marginBottom:15,width:1640 }}>
                     <h2>History</h2>
-                </div>
+                </Card>
 
-                <div className="table">
-
-                    <Table
-                        id="table-detail"
-                        className="table-detail"
-                        columns={columns}
-                        dataSource={this.state.dataTable}
-                        bordered
-                        // pagination={{ defaultPageSize: 20}}
-                        rowKey={record => record.index}
-                    />
-                </div>
-
-
+              <Card style={{width:1640}} >
+                  <div >
+                      <Table
+                          columns={columns}
+                          dataSource={this.state.dataTable}
+                          bordered
+                          // pagination={{ defaultPageSize: 20}}
+                          rowKey={record => record.index}
+                      />
+                  </div>
+            </Card>
             </div>
+
+
+
 
         )
     }
