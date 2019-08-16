@@ -114,6 +114,13 @@ class Sider extends React.Component {
                         </span>
                             </Link>
                         </Menu.Item>
+                        <Menu.Item key="logout_juniper_devices">
+                            <Link to="/devices/logout-juniper-devices">
+                        <span>
+                        <span>Logout logs</span>
+                        </span>
+                            </Link>
+                        </Menu.Item>
 
                         <Menu.Item key="all_devices">
                             <Link to="/devices/devices">

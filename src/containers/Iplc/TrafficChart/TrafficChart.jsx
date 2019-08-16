@@ -347,7 +347,7 @@ class TrafficChart  extends React.Component {
                                     <Option key="Ha+Noi" label="Ha Noi">Ha Noi</Option>
                                 </Select>
                             </div>
-                            <div style={{float:"left", width:1000, marginRight:-600}}>
+                            <div style={{float:"left", width:1000, marginRight:-600, marginTop:10}}>
                                 <h4 style={{fontWeight:"560"}}>
                                     Location</h4>
                                 <Select
@@ -364,7 +364,7 @@ class TrafficChart  extends React.Component {
                                 </Select>
                             </div>
                             <div>
-                                <h4 style={{fontWeight:"560"}}>
+                                <h4 style={{fontWeight:"560", marginTop:10}}>
                                     Provider</h4>
                                 <Select
                                     mode="multiple"

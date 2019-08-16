@@ -20,6 +20,7 @@ import TrafficChart from '../Iplc/TrafficChart/TrafficChart';
 
 import AddNewDevice from '../Devices/AddNewDevice/AddNewDevice';
 import RemovePortsLogs from '../Devices/RemovePortsLogs/RemovePortsLogs';
+import LogoutLogs from "../Devices/LogoutLogs/LogoutLogs";
 import AllDevices from '../Devices/AllDevices/AllDevices';
 import FunctionList from '../Devices/FunctionList/FunctionList';
 import AreasAndRooms from '../Devices/AreasAndRooms/AreasAndRooms';
@@ -66,6 +67,7 @@ function App() {
 
                         <Route path={routes.add_new_device} component={AddNewDevice}/>
                         <Route path={routes.remove_ports_logs} component={RemovePortsLogs}/>
+                        <Route path={routes.logout_juniper_devices} component={LogoutLogs}/>
                         <Route path={routes.all_devices} component={AllDevices}/>
                         <Route path={routes.function_list} component={FunctionList}/>
                         <Route path={routes.areas_and_rooms} component={AreasAndRooms}/>

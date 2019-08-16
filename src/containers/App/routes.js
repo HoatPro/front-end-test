@@ -14,6 +14,7 @@ export default {
   // devices: '/devices',
      add_new_device:'/devices/add-new-device',
      remove_ports_logs:'/devices/remove-ports',
+     logout_juniper_devices:'/devices/logout-juniper-devices',
      all_devices:'/devices/devices',
      function_list:'/devices/function-list',
      areas_and_rooms:'/devices/areas-and-rooms',
