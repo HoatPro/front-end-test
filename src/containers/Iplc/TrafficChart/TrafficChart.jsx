@@ -1,6 +1,7 @@
 import React from "react";
-import {Collapse, DatePicker, Select, Button, message,Card} from 'antd';
+import {Collapse, DatePicker, Select, Button, message,Card, Row, Col} from 'antd';
 import ReactEcharts from "echarts-for-react";
+import {TrafficChartWrapper} from "./TrafficChart.style"
 import axios from "axios";
 import moment from 'moment';
 const { Panel } = Collapse;
@@ -289,103 +290,117 @@ class TrafficChart  extends React.Component {
       const endDay=this.formatDate(today);
       console.log(defaultActive)
         return (
-            <div>
+            <TrafficChartWrapper>
                 <Card style={{border:"20",backgroundColor:"#f7f7f7", padding:15}}>
                     <h2>Traffic Chart</h2>
                     <Collapse defaultActiveKey={['1']}  >
                         <Panel header="Filter" key="1" style={{fontWeight:600}}>
-                            <div className="from_date" style={{ width:200,float:"left"}}>
-                                <h4 style={{fontWeight:"560"}}>From</h4>
-                                <DatePicker
-                                    style={{marginRight:20}}
-                                    disabledDate={this.disabledStartDate}
-                                    format={dateFormat}
-                                    value={startValue}
-                                    placeholder="Start"
-                                    onChange={this.onStartChange}
-                                    onOpenChange={this.handleStartOpenChange}
-                                />
-                            </div>
-                            <div className="to_date"  style={{ width:200,float:"left"}}>
-                                <h4 style={{fontWeight:"560"}}>To</h4>
-                                <DatePicker
+                            <Row>
+                                <Col span={8}>
+                                    <div className="from_date" style={{ width:180,float:"left"}}>
+                                        <h4 style={{fontWeight:"560"}}>From</h4>
+                                        <DatePicker
+                                            style={{marginRight:20}}
+                                            disabledDate={this.disabledStartDate}
+                                            format={dateFormat}
+                                            value={startValue}
+                                            placeholder="Start"
+                                            onChange={this.onStartChange}
+                                            onOpenChange={this.handleStartOpenChange}
+                                        />
+                                    </div>
+                                    <div className="to_date"  style={{ width:180,float:"left"}}>
+                                        <h4 style={{fontWeight:"560"}}>To</h4>
+                                        <DatePicker
 
-                                    disabledDate={this.disabledEndDate}
-                                    format={dateFormat}
-                                    value={endValue}
-                                    onChange={this.onEndChange}
-                                    open={endOpen}
-                                    onOpenChange={this.handleEndOpenChange}
-                                />
-                            </div>
-                            <div style={{float:"left",width:1000,marginRight:-500}} >
-                                <h4 style={{fontWeight:"560"}}>Type</h4>
-                                <Select
-                                    mode="multiple"
-                                    style={{ width: '47%' }}
-                                    onChange={this.handleChangeType}
-                                    defaultValue={['All']}
-                                    optionLabelProp="label"
-                                >
-                                    <Option key="-1" label="All">All </Option>
-                                    <Option key="Landline" label="Landline">Landline</Option>
-                                    <Option key="submarine" label="submarine">submarine</Option>
-                                </Select>
-                            </div>
-                            <div>
-                                <h4 style={{fontWeight:"560",width:1000}}>Local location</h4>
-                                <Select
-                                    mode="multiple"
-                                    style={{ width: '30%' }}
-                                    defaultValue={['All']}
-                                    onChange={this.handleChangeLocalLocation}
-                                    optionLabelProp="label"
-                                >
-                                    <Option key="-1" label="All">All </Option>
-                                    <Option key="Da+Nang" label="Da Nang">Da Nang</Option>
-                                    <Option key="Ho+Chi+Minh" label="Ho Chi Minh">Ho Chi Minh</Option>
-                                    <Option key="Ha+Noi" label="Ha Noi">Ha Noi</Option>
-                                </Select>
-                            </div>
-                            <div style={{float:"left", width:1000, marginRight:-600, marginTop:10}}>
-                                <h4 style={{fontWeight:"560"}}>
-                                    Location</h4>
-                                <Select
-                                    mode="multiple"
-                                    style={{ width: '37.55%' }}
-                                    defaultValue={['All']}
-                                    onChange={this.handleChangeLocation}
-                                    optionLabelProp="label"
-                                >
-                                    <Option key="-1" label="All">All </Option>
-                                    <Option key="Singapore" label="Singapore">Singapore</Option>
-                                    <Option key="Hongkong" label="Hongkong">Hong Kong</Option>
-                                    <Option key="Japan" label="Japan">Japan</Option>
-                                </Select>
-                            </div>
-                            <div>
-                                <h4 style={{fontWeight:"560", marginTop:10}}>
-                                    Provider</h4>
-                                <Select
-                                    mode="multiple"
-                                    style={{ width: '32.5%' }}
-                                    defaultValue={['All']}
-                                    onChange={this.handleChangeProvider}
-                                    optionLabelProp="label"
-                                >
-                                    <Option key="-1" label="All">All </Option>
-                                    <Option key="APG" label="APG">APG</Option>
-                                    <Option key="IA" label="IA">IA</Option>
-                                    <Option key="AAE-1" label="AAE-1">AAE-1</Option>
-                                    <Option key="AAG" label="AAG">AAG</Option>
-                                    <Option key="CMI" label="CMI">CMI</Option>
-                                    <Option key="CT" label="CT">CT</Option>
-                                    <Option key="CU" label="CU">CU</Option>
-                                </Select>
-                            </div>
-                            <div style={{marginTop:10}}>
-                                <Button type="primary" onClick={this.handleSearch}>Search</Button>
-                            </div>
+                                            disabledDate={this.disabledEndDate}
+                                            format={dateFormat}
+                                            value={endValue}
+                                            onChange={this.onEndChange}
+                                            open={endOpen}
+                                            onOpenChange={this.handleEndOpenChange}
+                                        />
+                                    </div>
+                                </Col>
+                                <Col span={8}>
+                                    <div  >
+                                        <h4 style={{fontWeight:"560"}}>Type</h4>
+                                        <Select
+                                            mode="multiple"
+                                            style={{width:360}}
+                                            onChange={this.handleChangeType}
+                                            defaultValue={['All']}
+                                            optionLabelProp="label"
+                                        >
+                                            <Option key="-1" label="All">All </Option>
+                                            <Option key="Landline" label="Landline">Landline</Option>
+                                            <Option key="submarine" label="submarine">submarine</Option>
+                                        </Select>
+                                    </div>
+                                </Col>
+                            <Col span={8}>
+                                <div>
+                                    <h4 style={{fontWeight:"560"}}>Local location</h4>
+                                    <Select
+                                        mode="multiple"
+                                        style={{width:360}}
+                                        defaultValue={['All']}
+                                        onChange={this.handleChangeLocalLocation}
+                                        optionLabelProp="label"
+                                    >
+                                        <Option key="-1" label="All">All </Option>
+                                        <Option key="Da+Nang" label="Da Nang">Da Nang</Option>
+                                        <Option key="Ho+Chi+Minh" label="Ho Chi Minh">Ho Chi Minh</Option>
+                                        <Option key="Ha+Noi" label="Ha Noi">Ha Noi</Option>
+                                    </Select>
+                                </div>
+                            </Col>
+                            </Row>
+                            <Row>
+                                <Col span={8}>
+                                    <div style={{marginTop:10}}>
+                                    <h4 style={{fontWeight:"560"}}>
+                                        Location</h4>
+                                    <Select
+                                        mode="multiple"
+                                        style={{width:360}}
+                                        defaultValue={['All']}
+                                        onChange={this.handleChangeLocation}
+                                        optionLabelProp="label"
+                                    >
+                                        <Option key="-1" label="All">All </Option>
+                                        <Option key="Singapore" label="Singapore">Singapore</Option>
+                                        <Option key="Hongkong" label="Hongkong">Hong Kong</Option>
+                                        <Option key="Japan" label="Japan">Japan</Option>
+                                    </Select>
+                                </div>
+                                </Col>
+                                <Col span={8}>
+                                    <div>
+                                        <h4 style={{fontWeight:"560", marginTop:10}}>
+                                            Provider</h4>
+                                        <Select
+                                            mode="multiple"
+                                            style={{width:360}}
+                                            defaultValue={['All']}
+                                            onChange={this.handleChangeProvider}
+                                            optionLabelProp="label"
+                                        >
+                                            <Option key="-1" label="All">All </Option>
+                                            <Option key="APG" label="APG">APG</Option>
+                                            <Option key="IA" label="IA">IA</Option>
+                                            <Option key="AAE-1" label="AAE-1">AAE-1</Option>
+                                            <Option key="AAG" label="AAG">AAG</Option>
+                                            <Option key="CMI" label="CMI">CMI</Option>
+                                            <Option key="CT" label="CT">CT</Option>
+                                            <Option key="CU" label="CU">CU</Option>
+                                        </Select>
+                                    </div>
+                                </Col>
+                            <Col span={8} style={{marginTop:37}}>
+                                <Button style={{width:180}} type="primary" onClick={this.handleSearch}>Search</Button>
+                            </Col>
+                            </Row>
                         </Panel>
                     </Collapse>
                 </Card>
@@ -412,7 +427,7 @@ class TrafficChart  extends React.Component {
                     </div>
                </Card>
 
-            </div>
+            </TrafficChartWrapper>
 
         );
     }

@@ -3,6 +3,8 @@ import React from "react";
 import { Table ,message,Card,Icon,Button,Input} from 'antd';
 import { CgnatPreferWrapper } from "./CgnatPrefer.style";
 import axios from "axios";
+import _ from 'lodash';
+import ExportJsonExcel from 'js-export-excel';
 const { Search } = Input;
 
 class CgnatPrefer extends React.Component {
@@ -38,7 +40,51 @@ class CgnatPrefer extends React.Component {
             })
         }
     }
+    downloadExcel = () => {
+        const option={};
+        const {dataTable}=this.state;
+        console.log(dataTable)
+        const dataExcel=[];
+        for(let i in dataTable){
+            if(dataTable){
+                let obj={
+                    "Index":dataTable[i].index,
+                    "Region":dataTable[i].dataObj.mpRegion,
+                    "Group Mp":dataTable[i].dataObj.mpGroup,
+                    "Mp":dataTable[i].dataObj.name,
+                    "MP Ip":dataTable[i].dataObj.ip,
+                    "CGNAT":dataTable[i].dataObj.cgnat,
+                    "CGNAT Ip":dataTable[i].dataObj.cgnat_ip
 
+
+                }
+                dataExcel.push(obj)
+
+            }
+        }
+        option.fileName = 'CGNAT_Prefer'
+        option.datas=[
+            {
+                sheetData:dataExcel,
+                sheetName:'sheet',
+                sheetFilter:['Index','Region','Group Mp','Mp','Mp Ip','CGNAT','CGNAT Ip'],
+                sheetHeader:['Index','Region','Group Mp','Mp','Mp Ip','CGNAT','CGNAT Ip'],
+            }
+        ];
+
+        var toExcel = new ExportJsonExcel(option);
+        toExcel.saveExcel();
+    }
+    handleSearch=(value)=>{
+        const {dataTable}=this.state;
+      const filteredList= dataTable.filter(function (item) {
+            const lowerCaseSearchByName = value.trim().toLowerCase();
+            return item.dataObj.mpGroup == lowerCaseSearchByName.toUpperCase();
+        });
+        this.setState({
+           dataTable:filteredList
+        })
+    }
 
     render() {
         const columns = [
@@ -49,7 +95,6 @@ class CgnatPrefer extends React.Component {
             },
             {
                 title: 'Region',
-                // dataIndex:'device_name',
                 key: 'mpRegion',
                 render:record=>{
                     return record.dataObj.mpRegion
@@ -57,7 +102,6 @@ class CgnatPrefer extends React.Component {
             },
             {
                 title: 'Group Mp',
-                // dataIndex:'device_ip',
                 key: 'mpGroup',
                 render:record=>{
                     return record.dataObj.mpGroup
@@ -65,7 +109,6 @@ class CgnatPrefer extends React.Component {
             },
             {
                 title: 'MP',
-                // dataIndex:'fpc_slot',
                 key: 'mp',
                 render:record=>{
                     return record.dataObj.name
@@ -73,7 +116,6 @@ class CgnatPrefer extends React.Component {
             },
             {
                 title: 'MP Ip',
-                // dataIndex:'pic_slot',
                 key: 'ip',
                 render:record=>{
                     return record.dataObj.ip
@@ -81,7 +123,6 @@ class CgnatPrefer extends React.Component {
             },
             {
                 title: 'CGNAT',
-                // dataIndex:'card',
                 key: 'cgnat',
                 render:record=>{
                     return record.dataObj.cgnat
@@ -89,7 +130,6 @@ class CgnatPrefer extends React.Component {
             },
             {
                 title: 'CGNAT Ip',
-                // dataIndex:'log_message',
                 key: 'cgnat_ip',
                 render:record=>{
                     return record.dataObj.cgnat_ip
@@ -105,15 +145,15 @@ class CgnatPrefer extends React.Component {
 
                         <Search
                             placeholder="Search by name..."
-                            onSearch={value => console.log(value)}
-                            style={{ width: 200, marginRight:20 }}
+                            onSearch={value => this.handleSearch(value)}
+                            style={{ width:180,marginRight:20 }}
+                            enterButton
                         />
-                        <Button type="primary">Export to excel</Button>
+                        <Button type="primary"  onClick={this.downloadExcel}>Export to excel</Button>
 
                 </Card>
                 <Card>
                     <Table
-                        className="table-detail"
                         columns={columns}
                         dataSource={this.state.dataTable}
                         bordered

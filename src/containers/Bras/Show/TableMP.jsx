@@ -166,7 +166,6 @@ class TableMP extends React.Component{
             <div>
                 {graph}
                 <Table
-                    className="table-detail"
                     columns={columns}
                     dataSource={this.state.dataTable}
                     bordered

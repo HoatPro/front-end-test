@@ -1,5 +1,6 @@
 import React from "react";
-import {Card,Button,Table,message,Switch,Icon} from 'antd'
+import {Card,Button,Table,message,Switch,Icon} from 'antd';
+import {DevicesConfigWrapper} from "./DevicesConfig.style"
 import axios from "axios";
 class DevicesConfig extends React.Component {
     constructor(props){
@@ -108,8 +109,8 @@ class DevicesConfig extends React.Component {
 
             ]
         return (
-            <div>
-                    <Card  style={{ width: "100%",fontWeight:600, marginBottom:15 }}>
+            <DevicesConfigWrapper>
+                    <Card  style={{ width: "100%",fontWeight:600, marginBottom:10 }}>
                         <h2>All Devices</h2>
                        <Button style={{backgroundColor:"#21ba45",color:"white", fontWeight:560, float:"left"}}> + Create device</Button>
                     </Card>
@@ -123,7 +124,7 @@ class DevicesConfig extends React.Component {
                             rowKey={record => record.index}
                         />
                     </Card>
-            </div>
+            </DevicesConfigWrapper>
         );
     }
 }

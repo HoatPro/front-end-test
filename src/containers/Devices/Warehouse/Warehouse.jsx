@@ -1,7 +1,8 @@
 import React from "react";
 import { Table, Button, Icon ,Modal,Form,Input, message, Card} from 'antd';
+import {WarehouseWrapper} from "./Warehouse.style"
 import axios from "axios";
-import Search from "antd/lib/input/Search";
+
 const CreateForm = Form.create({ name: 'form_in_modal' })(
     // eslint-disable-next-line
     class extends React.Component {
@@ -224,7 +225,7 @@ class Warehouse extends React.Component {
         ];
 
         return (
-            <div>
+            <WarehouseWrapper>
                 <Card style={{ width:"100%",marginBottom:20}}>
                     <div>
                         <h2>Warehouse</h2>
@@ -246,7 +247,7 @@ class Warehouse extends React.Component {
                         rowKey={record => record.netDeviceFunctionId}
                     />
                 </Card>
-            </div>
+            </WarehouseWrapper>
 
         )
     }

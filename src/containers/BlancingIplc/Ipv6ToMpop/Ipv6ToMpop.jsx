@@ -1,6 +1,6 @@
 import React from "react";
 import { Table ,message, Card} from 'antd';
-
+import {Ipv6ToMpopWrapper} from "./Ipv6ToMpop.style"
 import axios from "axios";
 import Search from "antd/lib/input/Search";
 
@@ -70,10 +70,9 @@ class Ipv6ToMpop extends React.Component {
             }
         ];
 
-
         return (
-                       <div>
-                           <Card style={{marginBottom:20}}>
+                       <Ipv6ToMpopWrapper>
+                           <Card style={{marginBottom:10}}>
                                <h2>
                                    Ipv6 to MPOP
                                </h2>
@@ -86,11 +85,10 @@ class Ipv6ToMpop extends React.Component {
                                    columns={columns}
                                    dataSource={this.state.dataTable}
                                    bordered
-                                   // pagination={{ defaultPageSize: 20}}
                                    rowKey={record => record.index}
                                />
                            </Card>
-                       </div>
+                       </Ipv6ToMpopWrapper>
 
         )
     }

@@ -1,5 +1,6 @@
 import React from "react";
 import {Table, Icon, Button, Form, Modal, Input,Select,Card} from 'antd';
+import {c} from "./LogConfig.style"
 import axios from "axios";
 const { Option } = Select
 const CreateForm = Form.create({ name: 'form_in_modal' })(
@@ -182,8 +183,8 @@ class LogConfig extends React.Component {
 
 
         return (
-            <div>
-                <Card  style={{ width: "100%",fontWeight:600, marginBottom:15 }}>
+            <LogConfigWrapper>
+                <Card  style={{ width: "100%",fontWeight:600, marginBottom:10 }}>
                     <h2>LogConfig</h2>
                     <Button style={{ backgroundColor:"#21ba45", color:"white"}} onClick={this.showModal}> + Create log</Button>
                     <CreateForm
@@ -194,7 +195,7 @@ class LogConfig extends React.Component {
                     />
                 </Card>
 
-                <div className="table" >
+                <Card className="table" >
                     <Table
                         style={{marginTop:30}}
                         id="table-detail"
@@ -205,10 +206,10 @@ class LogConfig extends React.Component {
                         // pagination={{ defaultPageSize: 20}}
                         rowKey={record => record.index}
                     />
-                </div>
+                </Card>
 
 
-            </div>
+            </LogConfigWrapper>
 
         )
     }

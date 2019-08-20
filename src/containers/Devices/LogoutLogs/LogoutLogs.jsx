@@ -1,5 +1,6 @@
 import React from "react";
-import {Card,Tabs,Table,message,Icon,DatePicker, Select,Alert,Modal,Button} from 'antd'
+import {Card,Tabs,Table,message,Icon,DatePicker, Select,Alert,Modal,Button} from 'antd';
+import {LogoutLogsWrapper} from "./LogoutLogs.style"
 import axios from "axios";
 import Search from "antd/lib/input/Search";
 import moment from "moment";
@@ -210,7 +211,7 @@ class LogoutLogs extends React.Component {
 
         ]
         return (
-            <div>
+            <LogoutLogsWrapper>
                 <Card  style={{ width: "100%",fontWeight:600, marginBottom:15 }}>
                     <h2 style={{fontWeight:700}}>Logs</h2>
 
@@ -252,7 +253,7 @@ class LogoutLogs extends React.Component {
                             />
 
                 </Card>
-            </div>
+            </LogoutLogsWrapper>
         );
     }
 }

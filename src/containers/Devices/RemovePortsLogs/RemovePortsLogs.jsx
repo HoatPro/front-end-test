@@ -1,9 +1,11 @@
 import React from "react";
-import {Card,Tabs,Table,message,Icon,DatePicker, Select,Alert} from 'antd'
+import {Card,Tabs,Table,message,Icon,DatePicker, Select,Alert,Modal,Button} from 'antd';
+import {RemovePortsLogsWrapper} from "./RemovePortsLogs.style"
 import axios from "axios";
 import Search from "antd/lib/input/Search";
 import TableFail from "./TableFail"
 import moment from "moment";
+import TableDetail from "../RemovePortsLogs/TableDetail";
 const dateFormat = 'DD-MM-YYYY';
 const { TabPane } = Tabs;
 class RemovePortsLogs extends React.Component {
@@ -14,7 +16,9 @@ class RemovePortsLogs extends React.Component {
             totalPortCnt:null,
             totalSuccessPortCnt:null,
             totalSuccessPortPercent:null,
-            dataGet:[]
+            dataGet:[],
+            dataLogs:[],
+            visible:false,
 
         }
     }
@@ -38,9 +42,6 @@ class RemovePortsLogs extends React.Component {
                 }
                 return s;
             }, 0)), 0);
-
-
-
             const totalSuccessPortPercent = Math.round(totalSuccessPortCnt / totalPortCnt * 100 * 100) / 100;
             const dataObj=data.map((data,index)=>{
                 let successPortCnt = data.ports.reduce((s, data) => {
@@ -104,14 +105,29 @@ class RemovePortsLogs extends React.Component {
     //     })
     //
     // }
-   callback=()=>{
-        console.log("a")
-   }
+
+    handleClick=(index)=>{
+        const {dataTable}=this.state;
+        const dataLogs=[];
+        dataTable.filter(data=>{
+            if(data.index==index){
+                dataLogs.push(data)
+            }
+        })
+        this.setState({
+            visiable:true,
+            dataLogs:dataLogs
+        })
+    }
+    setVisible=(visiable)=>{
+        this.setState({
+            visiable:visiable
+        })
+    }
+
     render() {
-        const{dataGet,dataTable,totalPortCnt,totalSuccessPortCnt,totalSuccessPortPercent}=this.state;
-
-
-
+        const{dataGet,dataTable,totalPortCnt,totalSuccessPortCnt,totalSuccessPortPercent,dataLogs,visiable}=this.state;
+        console.log(dataLogs)
         const columns = [
             {
                 title: 'Index',
@@ -175,7 +191,23 @@ class RemovePortsLogs extends React.Component {
                 key: 'action',
                 render:record=>{
                     return(<div >
-                        <Icon type="eye" style={{ width:26, height:26,backgroundColor:"#00b5ad",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>
+                        <Icon
+                            type="eye"
+                            style={{ width:26, height:26,backgroundColor:"#00b5ad",padding:5,color:"white",fontWeight:700,borderRadius:5}}
+                            onClick={()=>this.handleClick(record.index)}
+                        />
+                        <Modal
+                            width={1200}
+                            closable={false}
+                            title={`Ports of device ${record.data.name} | ${record.data.ip}`}
+                            centered
+                            visible={visiable}
+                            footer={[
+                                <Button key={1} type="danger" onClick={() => this.setVisible(false)}>Close</Button>
+                            ]}
+                        >
+                            <TableDetail data={dataLogs} />
+                        </Modal>
                     </div>)
                 }
             },
@@ -183,7 +215,7 @@ class RemovePortsLogs extends React.Component {
         ]
         return (
 
-            <div>
+            <RemovePortsLogsWrapper>
                 <Card  style={{ width: "100%",fontWeight:600, marginBottom:15 }}>
                     <h2 style={{fontWeight:700}}>Logs</h2>
 
@@ -231,7 +263,7 @@ class RemovePortsLogs extends React.Component {
 
                     </Tabs>
                 </Card>
-            </div>
+            </RemovePortsLogsWrapper>
         );
     }
 }

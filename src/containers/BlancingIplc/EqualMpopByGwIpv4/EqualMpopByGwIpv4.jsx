@@ -1,6 +1,6 @@
 import React from "react";
 import {Table, message, Card} from 'antd';
-
+import { EqualMpopByGwIpv4Wrapper} from "./EqualMpopByGwIpv4.style"
 import axios from "axios";
 import Search from "antd/lib/input/Search";
 
@@ -124,8 +124,8 @@ class EqualMpopByGwIpv4 extends React.Component {
         ];
         const {dataTable}=this.state;
         return (
-            <div>
-                <Card style={{marginBottom:20}}>
+            <EqualMpopByGwIpv4Wrapper>
+                <Card style={{marginBottom:10}}>
                     <h2>
                         Equal MPOP by GW
                     </h2>
@@ -141,7 +141,7 @@ class EqualMpopByGwIpv4 extends React.Component {
                         rowKey={record => record.index}
                     />
                 </Card>
-            </div>
+            </EqualMpopByGwIpv4Wrapper>
 
         )
     }

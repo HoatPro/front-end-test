@@ -1,5 +1,6 @@
 import React from "react";
 import { Table, Button, Icon ,Modal,Form,Input, message, Card} from 'antd';
+import {FunctionListWrapper} from "./FunctionList.style"
 import axios from "axios";
 import Search from "antd/lib/input/Search";
 const CreateForm = Form.create({ name: 'form_in_modal' })(
@@ -180,7 +181,6 @@ class FunctionList extends React.Component {
             },
             {
                 title: 'Name',
-                // dataIndex:'netDeviceFunctionName',
                 key: 'name',
                 render:record=>{
                     return record.dt.netDeviceFunctionName
@@ -190,7 +190,6 @@ class FunctionList extends React.Component {
 
             {
                 title: 'Note',
-                // dataIndex:'note',
                 key: 'note',
                 render:record=>{
                     return record.dt.note
@@ -228,7 +227,7 @@ class FunctionList extends React.Component {
         ];
 
         return (
-             <div>
+             <FunctionListWrapper>
                  <Card style={{ width:"100%",marginBottom:20}}>
                  <div>
                      <h2>Function List</h2>
@@ -251,7 +250,7 @@ class FunctionList extends React.Component {
                      rowKey={record => record.netDeviceFunctionId}
                  />
                  </Card>
-             </div>
+             </FunctionListWrapper>
 
         )
     }

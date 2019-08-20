@@ -1,9 +1,12 @@
 import React from "react";
-import {Table, message, Button, Modal, Form, Input, Card} from 'antd';
+import {Table, message, Button, Modal, Form, Input, Card,} from 'antd';
+import {AreasAndRoomsWrapper} from "./AreasAndRooms.style"
 import axios from "axios";
 import Icon from "antd/lib/icon";
 import TableRoom from "./Rooms";
+import ModalEdit from "./ModalEdit";
 const {Search}=Input;
+const confirm = Modal.confirm;
 const CreateForm = Form.create({ name: 'form_in_modal' })(
     // eslint-disable-next-line
     class extends React.Component {
@@ -14,10 +17,14 @@ const CreateForm = Form.create({ name: 'form_in_modal' })(
                 <Modal
                     visible={visible}
                     title="Create or Edit Area"
-                    onCancel={onCancel}
-                    onOk={onCreate }
-                    okText="Save"
-                    cancelText="Close"
+                    centered
+                    closable={false}
+                    footer={[
+                       <div>
+                           <Button key={1} style={{backgroundColor:"#16ab39",color:"white"}} onClick={onCreate}><Icon type="check"></Icon>Save</Button>
+                           <Button key={2} type="danger" onClick={onCancel}>Close</Button>
+                       </div>
+                    ]}
 
                 >
                     <Form layout="vertical">
@@ -38,10 +45,12 @@ class AreasAndRoom extends React.Component {
         super(props);
         this.state={
             dataTable:[],
-            visiable:false,
+            visiableCreate:false,
             idSelected:null,
             nameRoom:"",
-            styleColor:"#9CE0AF"
+            styleColor:"#9CE0AF",
+            visiableEdit:false,
+            nameSelected:""
         }
     }
     async componentDidMount(){
@@ -72,11 +81,11 @@ class AreasAndRoom extends React.Component {
 
 
     showModal = () => {
-        this.setState({ visible: true });
+        this.setState({ visiableCreate: true });
     };
 
     handleCancel = () => {
-        this.setState({ visible: false });
+        this.setState({ visiableCreate: false });
     };
 
     handleCreate = () => {
@@ -88,7 +97,7 @@ class AreasAndRoom extends React.Component {
 
             console.log('Received values of form: ', values);
             form.resetFields();
-            this.setState({ visible: false });
+            this.setState({ visiableCreate: false });
         });
     };
 
@@ -103,9 +112,31 @@ class AreasAndRoom extends React.Component {
             styleColor:"#16AB39"
         })
     }
+    // Edit data
+    editAera=(id,name)=>{
+        this.setState({
+            visiableEdit:true,
+            nameSelected:name
+        })
+    }
+    //delete Data
+     showDeleteConfirm=()=> {
+        confirm({
+            title: 'Are you sure delete this area?',
+            content: 'With delete will remove items',
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+                console.log('OK');
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
+    }
     render() {
-        const{idSelected,dataTable,nameRoom,styleColor}=this.state;
-        console.log(idSelected)
+        const{idSelected,dataTable,nameRoom,styleColor,visiableCreate,visiableEdit,nameSelected}=this.state;
         const columns = [
             {
                 title: '#',
@@ -127,11 +158,19 @@ class AreasAndRoom extends React.Component {
                         <div>
                             <Icon
                                 type="eye"
-                                style={{ width:26, height:26,backgroundColor:"#fbbd08",padding:5,color:"white",fontWeight:700,borderRadius:5}}
+                                style={{ width:26, height:26,backgroundColor:"#00b5ad",padding:5,color:"white",fontWeight:700,borderRadius:5}}
                                 onClick={()=>this.showAera(record.dt.id,record.dt.name)}
                             />&nbsp;
-                            <Icon type="edit"  style={{ width:26, height:26,backgroundColor:"#00b5ad",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>&nbsp;
-                            <Icon type="delete"  style={{ width:26, height:26,backgroundColor:"#db2828",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>
+                            <Icon
+                                type="edit"
+                                style={{ width:26, height:26,backgroundColor:"#fbbd08",padding:5,color:"white",fontWeight:700,borderRadius:5}}
+                                onClick={()=>this.editAera(record.dt.id,record.dt.name)}
+                            />&nbsp;
+                            <Icon
+                                type="delete"
+                                style={{ width:26, height:26,backgroundColor:"#db2828",padding:5,color:"white",fontWeight:700,borderRadius:5}}
+                                onClick={this.showDeleteConfirm}
+                            />
                         </div>
                     )
                 }
@@ -140,7 +179,7 @@ class AreasAndRoom extends React.Component {
         ];
 
         return (
-           <div>
+           <AreasAndRoomsWrapper>
               <Card className="areas" style={{width:"60%",float:"left"}}>
                   <h1>Areas</h1>
                   <Button style={{marginBottom:20,backgroundColor:"#16AB39",color:"white", fontWeight:600}} onClick={this.showModal}> + Create </Button>
@@ -150,10 +189,11 @@ class AreasAndRoom extends React.Component {
                   </div>
                   <CreateForm
                       wrappedComponentRef={this.saveFormRef}
-                      visible={this.state.visible}
+                      visible={visiableCreate}
                       onCancel={this.handleCancel}
                       onCreate={this.handleOk}
                   />
+                  <ModalEdit visiableEdit={visiableEdit}  nameSelected={nameSelected}/>
                   <Table
                       className="table-detail"
                       columns={columns}
@@ -170,7 +210,7 @@ class AreasAndRoom extends React.Component {
                    <Button style={{marginBottom:20,backgroundColor:`${styleColor}`,color:"white", fontWeight:600}} > + Create</Button>
                    <TableRoom idSelected={idSelected} dataTable={dataTable}/>
                </Card>
-           </div>
+           </AreasAndRoomsWrapper>
 
         )
     }

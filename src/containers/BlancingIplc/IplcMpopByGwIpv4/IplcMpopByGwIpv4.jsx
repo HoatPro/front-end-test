@@ -1,5 +1,6 @@
 import React from "react";
 import {Table, message, Card} from 'antd';
+import {IplcMpopByGwIpv4Wrapper} from "./IplcMpopByGwIpv4.style"
 import axios from "axios";
 import Search from "antd/lib/input/Search";
 
@@ -124,15 +125,15 @@ class IplcMpopByGwIpv4 extends React.Component {
         const {dataTable}=this.state;
 
         return (
-            <div>
-                <Card style={{marginBottom:20}}>
+            <IplcMpopByGwIpv4Wrapper>
+                <Card style={{marginBottom:10}}>
                     <h2>
                         IPLC MPOP by GW
                     </h2>
                     <h4>Search by name</h4>
                     <Search style={{width: 300, marginTop: 8, marginBottom: 30}} placeholder="Search by name..."/>
                 </Card>
-                <div>
+                <Card>
                     <Table
                         className="table-detail"
                         columns={columns}
@@ -140,8 +141,8 @@ class IplcMpopByGwIpv4 extends React.Component {
                         bordered
                         rowKey={record => record.index}
                     />
-                </div>
-            </div>
+                </Card>
+            </IplcMpopByGwIpv4Wrapper>
 
         )
     }

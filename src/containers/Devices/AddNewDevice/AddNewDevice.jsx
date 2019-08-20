@@ -1,38 +1,61 @@
 import React from "react";
-import {Card,Button,Table,message,Switch,Icon,DatePicker, Select,Alert} from 'antd'
+import {Card, Button, Table, message, Icon, DatePicker, Select, Alert, Tabs, Modal} from 'antd'
 import axios from "axios";
+import {AddNewDeviceWrapper} from "./AddNewDevie.style"
 import Search from "antd/lib/input/Search";
-
+import TableFail from "../AddNewDevice/TableFail";
+import moment from "moment";
+import TableDetail from "../AddNewDevice/TableDetail";
 const dateFormat = 'DD-MM-YYYY';
-const { Option } = Select;
+const {TabPane}=Tabs;
 class AddNewDevice extends React.Component {
     constructor(props){
         super(props);
         this.state={
             dataTable:[],
-            statusText:"Active"
+            totalPortCnt:null,
+            totalSuccessPortCnt:null,
+            totalSuccessPortPercent:null,
+            dataGet:[],
+            dataLogs:[],
+            visible:false,
         }
     }
 
     async componentDidMount() {
+        let today     = moment(new Date());
+        const todaySelected=today._d.toISOString();
         const options = {
             method: "GET",
-            url: "https://netd.ast.fpt.net/netd-api/api/devices-tool-cgnat"
+            url: `https://netd.ast.fpt.net/netd-api/api/add-device-to-opsview-logs?date=${todaySelected}`
         };
         const {
             status,
             data: {data}
         } = await axios(options);
         if (status) {
-            message.success("GET Tool Cgnat decives successfull!");
+            message.success("GET logs successfull!");
+            const totalPortCnt = data.reduce((sum, e) => (sum + e.ports.length), 0);
+            const totalSuccessPortCnt = data.reduce((sum, e) => (sum + e.ports.reduce((s, port) => (s + port.existInOps), 0)), 0);
+            const totalSuccessPortPercent = Math.round(totalSuccessPortCnt / totalPortCnt * 100 * 100) / 100;
             const dataObj=data.map((data,index)=>{
+                let successPortCnt = data.ports.reduce((sum, data) => (sum + data.existInOps), 0);
+                let successPercent = (data.ports.length!=0?(Math.round(successPortCnt / data.ports.length * 100 * 100) / 100):100);
                 return {
                     index:index+1,
-                    data
+                    data,
+                    successPortCnt,
+                    successPercent,
+                    length:data.ports.length
                 }
             })
             this.setState({
-                dataTable: dataObj
+                dataTable: dataObj,
+                totalPortCnt:totalPortCnt,
+                totalSuccessPortCnt:totalSuccessPortCnt,
+                totalSuccessPortPercent:totalSuccessPortPercent,
+                dataGet:data
+
             })
         }else {message.error("GET data Error!!!")}
     }
@@ -72,9 +95,32 @@ class AddNewDevice extends React.Component {
 
     }
 
+    handleClick=(index)=>{
+        const {dataTable}=this.state;
+        const dataLogs=[];
+        dataTable.filter(data=>{
+            if(data.index==index){
+                dataLogs.push(data)
+            }
+        })
+        this.setState({
+            visiable:true,
+            dataLogs:dataLogs
+        })
+    }
+    setVisible=(visiable)=>{
+        this.setState({
+            visiable:visiable
+        })
+    }
     render() {
-
-        const{dataTable,statusText}=this.state;
+        const{dataTable,totalPortCnt,totalSuccessPortCnt,totalSuccessPortPercent,dataGet,dataLogs}=this.state;
+        const successPercentCheck=[]
+        dataGet.map((data,index)=>{
+            let successPortCnt = data.ports.reduce((sum, data) => (sum + data.existInOps), 0);
+            let successPercent = (data.ports.length!=0?(Math.round(successPortCnt / data.ports.length * 100 * 100) / 100):100);
+            successPercentCheck.push(successPercent)
+        })
         const columns = [
             {
                 title: '#',
@@ -84,33 +130,53 @@ class AddNewDevice extends React.Component {
                 }
             },
             {
+                title: 'Time',
+                key: 'time',
+                render:record=>{
+                    const times=record.data.time
+                    return moment(times).format("YYYY-MM-DD HH:mm:ss")
+                }
+            },
+            {
                 title: 'Name',
                 key: 'name',
                 render:record=>{
-                    return record.data.device_name
+                    return record.data.name
                 }
             },
             {
                 title: 'Ip',
-                key: 'ip',
-                render:record=>{
-                    return record.data.device_ip
-                }
-            },
-            {
-                title: 'Status',
-                key: 'status',
-                render:record=>{
-                    return (
-                        <div> <Switch defaultChecked onChange={()=>this.onChange(record.index)} /> {statusText}</div>
-                    )
-                }
-            },
-            {
-                title: 'Deactive time',
                 key: 'deactive-time',
                 render:record=>{
-                    return record.data.deactive_time
+                    return record.data.ip
+                }
+            },
+            {
+                title: 'Function',
+                key: 'function',
+                render:record=>{
+                    return record.data.function
+                }
+            },
+            {
+                title: 'Method',
+                key: 'method',
+                render:record=>{
+                    return record.data.method
+                }
+            },
+            {
+                title: 'Stat',
+                key: 'stat',
+                render: record => {
+                    if (record.successPercent == 0) {
+                        return <div
+                            style={{color: "red"}}>{record.successPortCnt + '/' + record.length + '(' + record.successPercent + '%)'}</div>
+                    }
+                    return <div
+                        style={{color: "green"}}>{record.successPortCnt + '/' + record.length + '(' + record.successPercent + '%)'}</div>
+
+
                 }
             },
             {
@@ -118,16 +184,31 @@ class AddNewDevice extends React.Component {
                 key: 'action',
                 render:record=>{
                     return(<div >
-                        <Icon type="edit" style={{ width:26, height:26,backgroundColor:"#fbbd08",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>&nbsp;
-                        <Icon type="clock-circle"  style={{ width:26, height:26,backgroundColor:"#00b5ad",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>&nbsp;
-                        <Icon type="delete"  style={{ width:26, height:26,backgroundColor:"#db2828",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>
+                        <Icon
+                            type="eye"
+                            style={{ width:26, height:26,backgroundColor:"#00b5ad",padding:5,color:"white",fontWeight:700,borderRadius:5,alignItems:"center"}}
+                            onClick={()=>this.handleClick(record.index)}
+                        />
+                        <Modal
+                            width={1200}
+                            closable={false}
+                            title={`Ports of device ${record.data.name} | ${record.data.ip}`}
+                            centered
+                            visible={this.state.visiable}
+                            footer={[
+                                <Button key={1} type="danger" onClick={() => this.setVisible(false)}>Close</Button>
+                            ]}
+                        >
+                            <TableDetail  data={dataLogs} />
+                        </Modal>
                     </div>)
                 }
             },
 
         ]
+
         return (
-            <div>
+            <AddNewDeviceWrapper>
                 <Card  style={{ width: "100%",fontWeight:600, marginBottom:15 }}>
                     <h2 style={{fontWeight:700}}>OPSVIEW</h2>
                     <h4> Add new device to opsview</h4>
@@ -162,9 +243,25 @@ class AddNewDevice extends React.Component {
 
                    </div>
 
-                    <Alert style={{fontWeight:650,textAlign:"center"}} message="There is no existed items!" type="warning" />
+                    <Tabs  type="card">
+                        <TabPane tab="Overview" key="1">
+                            <Alert style={{fontWeight:650,textAlign:"center",color:"#0e566c"}} message={`${totalSuccessPortCnt}/${totalPortCnt}(${totalSuccessPortPercent}%)`} type="info" />
+                            <Table
+                                style={{fontWeight:500,marginTop:10}}
+                                columns={columns}
+                                dataSource={dataTable}
+                                bordered
+                                rowKey={record=>record.index}
+                            />
+
+                        </TabPane>
+                        <TabPane tab="Fail list" key="2">
+                            <TableFail  dataGet={dataGet} successPercentCheck={successPercentCheck}/>
+                        </TabPane>
+
+                    </Tabs>
                 </Card>
-            </div>
+            </AddNewDeviceWrapper>
         );
     }
 }

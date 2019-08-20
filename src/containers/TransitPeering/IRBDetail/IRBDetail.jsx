@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import {message, DatePicker, Select, Card, Table, Form, Modal, Input} from "antd";
+import {IRBDetailWrapper} from "./IRBDetail.style"
 import Search from "antd/lib/input/Search";
 
 
@@ -151,7 +152,7 @@ render() {
         },
     ]
         return (
-            <div className="page-center">
+            <IRBDetailWrapper className="page-center">
                 <Card style={{width:"100%"}}>
                     <div className="irb-detail" style={{width:"100%",marginBottom:20}}>
                         <div style={{width:200, marginRight:60, float:"left"}} >
@@ -185,7 +186,7 @@ render() {
                              rowKey={record=>record.index}
                          />
                      </Card>
-            </div>
+            </IRBDetailWrapper>
         );
     }
 }

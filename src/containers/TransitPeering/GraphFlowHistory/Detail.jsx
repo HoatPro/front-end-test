@@ -404,8 +404,8 @@ class Detail extends React.Component {
                                 optionLabelProp="label"
                                 defaultValue={["in"]}
                             >
-                                <Option key="in" label="in">in</Option>
-                                <Option key="out" label="out">out</Option>
+                                <Option key="in" label="In">In</Option>
+                                <Option key="out" label="Out">Out</Option>
 
                             </Select>
                         </div>

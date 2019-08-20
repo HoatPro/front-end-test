@@ -1,5 +1,6 @@
 import React from "react";
 import { Table, DatePicker, Button,Card } from 'antd';
+import {ErrorLogWrapper} from "./ErrorLog.style"
 import axios from "axios";
 
 
@@ -144,8 +145,8 @@ class ErrorLog extends React.Component {
         const { startValue, endValue, endOpen } = this.state;
 
         return (
-         <div>
-             <Card  style={{ width: "100%",fontWeight:600, marginBottom:15 }}>
+         <ErrorLogWrapper>
+             <Card  style={{ width: "100%",fontWeight:600, marginBottom:10 }}>
                  <div className="selection_date" style={{ marginBottom:20}}>
                      <h2 style={{fontWeight:"640"}}>Error Log</h2>
                      <div className="from_date" style={{ float:"left"}}>
@@ -174,9 +175,6 @@ class ErrorLog extends React.Component {
                              onOpenChange={this.handleEndOpenChange}
                          />
                      </div>
-                     <div className="table-to-excel" style={{float:"right", marginTop:-33,marginRight:900}}>
-                         <Button type="primary"> Export to excel</Button>
-                     </div>
                  </div>
              </Card>
                  <Card  style={{ width: "100%",marginBottom:20 }}>
@@ -191,7 +189,7 @@ class ErrorLog extends React.Component {
                      rowKey={record => record.index}
                  />
                  </Card>
-         </div>
+         </ErrorLogWrapper>
 
         )
     }

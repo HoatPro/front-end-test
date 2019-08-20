@@ -1,5 +1,6 @@
 import React from "react";
 import {Collapse, DatePicker, Select, Tabs, message,Alert,Table, Card,Row,Col} from 'antd';
+import {TrafficStatisticsWrapper} from "./TrafficStatistics.style"
 import axios from "axios";
 import moment from 'moment';
 import Button from "antd/lib/button";
@@ -303,7 +304,7 @@ constructor(props){
 
         ];
         return (
-            <div>
+            <TrafficStatisticsWrapper>
             <Card>
                 <Collapse defaultActiveKey={['1']} >
                     <h2 style={{marginLeft:10, marginTop:10}}>IPLC Traffic</h2>
@@ -452,7 +453,7 @@ constructor(props){
                 </Collapse>
 
             </Card>
-            </div>
+            </TrafficStatisticsWrapper>
         );
     }
 }

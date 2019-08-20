@@ -16,7 +16,18 @@ const SiderWrapper = styled.div`
   .ant-menu.ant-menu-light.ant-menu-root.ant-menu-vertical{
     border:none;
   }
-
+  li.ant-menu-item{
+    margin: 10px;
+    width: calc(100% - 30px);
+    background-color: rgba(180,180,180,0.3);
+  }
+  li.ant-menu-submenu.ant-menu-submenu-inline{
+    border-bottom: 0.2px solid;
+    opacity:0.8;
+    margin-left:10px;
+    margin-right:10px
+  }
+  ant-menu-item ant-menu-item-selected
   
     // float:left
 `;

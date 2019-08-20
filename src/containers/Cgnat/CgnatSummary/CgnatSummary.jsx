@@ -1,5 +1,5 @@
 import React from "react";
-import {Card,Input,InputNumber,message,Table} from "antd";
+import {Card,Input,InputNumber,message,Table,Col,Row, Button} from "antd";
 import { CgnatSummaryWrapper } from "./CgnatSummary.style";
 import axios from "axios";
 import moment from 'moment';
@@ -186,6 +186,7 @@ class CgnatSummary extends React.Component {
             {
                 title: 'Action',
                 key: 'action',
+                width:55,
                 render:record=>{
                     return(<TextArea/>)
                 }
@@ -195,7 +196,7 @@ class CgnatSummary extends React.Component {
                 title: 'Deadline',
                 key: 'deadline',
                 render:record=>{
-                    return(<TextArea/>)
+                    return(<TextArea />)
                 }
 
             },
@@ -203,7 +204,7 @@ class CgnatSummary extends React.Component {
                 title: 'Assignment',
                 key: 'assognment',
                 render:record=>{
-                    return(<TextArea/>)
+                    return(<TextArea />)
                 }
 
             },
@@ -234,22 +235,53 @@ class CgnatSummary extends React.Component {
         const {dataTable}=this.state;
         return (
             <CgnatSummaryWrapper>
-                <Card title="CGNAT Summary"  style={{ width: 1640 ,fontWeight:700,marginBottom:10}}>
-                    <h4> Search by name ...</h4>
-                    <Search
-                        placeholder="input search text"
-                        style={{ width: 200 }}
-                    />
-                    {/*<h4>Increasing percent</h4>*/}
-                    {/*<InputNumber min={1} max={100} defaultValue={5} onChange={this.onChange} />*/}
+                <Card title="CGNAT Summary"  style={{fontWeight:700,marginBottom:10}}>
+                    <Row>
+                        <Col span={6}>
+                            <h4> Search by name ...</h4>
+                            <Search
+                                placeholder="input search text"
+                                style={{ width: 180 }}
+                            />
+                        </Col>
+                        <Col span={6} style={{marginLeft:-100}}>
+                            <h4>Increasing percent</h4>
+                            <InputNumber
+                                min={1}
+                                max={100}
+                                defaultValue={5}
+                                onChange={this.onChange}
+                                style={{ width: 80 }}/>
+                        </Col>
+                        <Col span={6} style={{marginLeft:-200}}>
+                            <h4>Export</h4>
+                            <Button
+                                type="primary"
+                                style={{ width: 180 }}
+                            >
+                                EXport to excel file</Button>
+                        </Col>
+                        <Col span={6} style={{marginLeft:-110}} >
+                           <h4>Save</h4>
+                            <Button
+                                style={{backgroundColor:"#21BA45", color:"white", fontWeight:650, width: 180}}
+                            >Save Plan</Button>
+                        </Col>
+                    </Row>
+
+
                 </Card>
+                <Card>
+
                     <Table
+                        scroll={{x:true}}
                         columns={columns}
-                        dataSource={this.state.dataTable}
+                        dataSource={dataTable}
                         bordered
-                        // pagination={{ defaultPageSize: 20}}
+                        size={"middle"}
                         rowKey={record => record.index}
                     />
+                </Card>
 
             </CgnatSummaryWrapper>
         );

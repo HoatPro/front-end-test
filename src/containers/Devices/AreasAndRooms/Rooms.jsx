@@ -11,15 +11,13 @@ class TableRoom extends  React.Component{
     }
 
 componentWillReceiveProps(nextProps) {
-        console.log(nextProps)
     const id=nextProps.idSelected;
         axios({
             method:'GET',
             url:`https://netd.ast.fpt.net/netd-api/api/net-rooms?areaId=${id}`
         }).then(res=>{
-            console.log(res)
             if(res.status){
-                message.success("Get data successfully!")
+                message.success("Get NET ROOM successfully!")
                 const dataTable=res.data.data;
                 const dataObj=dataTable.map((data,index)=>{
                     return{
@@ -53,6 +51,13 @@ componentWillReceiveProps(nextProps) {
                 }
             },
             {
+                title: 'Address',
+                key: 'address',
+                render:record=>{
+                    return record.data.address
+                }
+            },
+            {
                 title: 'Warehouse',
                 key: 'warehouse',
                 render:record=>{
@@ -65,7 +70,7 @@ componentWillReceiveProps(nextProps) {
                 render:record => {
                     return(
                        <div>
-                           <Icon type="edit"  style={{ width:26, height:26,backgroundColor:"#00b5ad",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>&nbsp;
+                           <Icon type="edit"  style={{ width:26, height:26,backgroundColor:"#fbbd08",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>&nbsp;
                            <Icon type="delete"  style={{ width:26, height:26,backgroundColor:"#db2828",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>
                        </div>
                     )

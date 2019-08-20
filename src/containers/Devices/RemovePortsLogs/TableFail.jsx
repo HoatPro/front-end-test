@@ -41,7 +41,6 @@ class TableFail  extends React.Component {
 
     render() {
         const {dataTable}=this.state;
-       console.log(dataTable)
         const columns = [
             {
                 title: 'Index',
@@ -62,7 +61,7 @@ class TableFail  extends React.Component {
             },
             {
                 title: 'Name',
-                key: 'name',
+                key: 'name-device',
                 render:record=>{
                     return record.data.device.name
                 }

@@ -1,5 +1,6 @@
 import React from "react";
-import {Card,InputNumber,Table,message,Switch,Icon} from 'antd'
+import {Card,Input,Table,message,Row,Col} from 'antd'
+import {RecommendActionWrapper} from "./RecommendAction.style"
 import axios from "axios";
 import moment from "moment";
 class RecommedAction extends React.Component {
@@ -71,7 +72,7 @@ class RecommedAction extends React.Component {
             },
             {
                 title: 'Pic Slot',
-                key: 'deactive-time',
+                key: 'pic-slot',
                 render:record=>{
                     return record.data.pic_slot
                 }
@@ -86,7 +87,7 @@ class RecommedAction extends React.Component {
             },
             {
                 title: 'Log Message',
-                key: 'deactive-time',
+                key: 'log-message',
                 render:record=>{
                     return record.data.log_message
                 }
@@ -110,19 +111,24 @@ class RecommedAction extends React.Component {
                 title: 'Action',
                 key: 'action',
                 render:record=>{
-                    return <div style={{backgroundColor:"orange", color:"white", fontWeight:700}}> {record.data.action_handler === "system" ? "Disabled by system" : record.data.command === "reboot" ? "Reboot" : "Shutdown"}</div>
+                    return <div style={{backgroundColor:"orange", color:"white", fontWeight:700, padding:6}}> {record.data.action_handler === "system" ? "Disabled by system" : record.data.command === "reboot" ? "Reboot" : "Shutdown"}</div>
                 }
             },
 
         ]
         return (
-            <div>
+            <RecommendActionWrapper>
                 <Card  style={{ width: "100%",fontWeight:600, marginBottom:15 }}>
                     <h2>Recommend Devices</h2>
                 </Card>
 
                 <Card  style={{ width: "100%" }}>
-                    <div style={{marginBottom:20,backgroundColor:"#E8E8E8", width:"17.97%", fontWeight:600}}> Number of items per page &nbsp;<InputNumber min={1} defaultValue={10} onChange={this.onChange} /></div>
+                    <div>
+                        {/*<p*/}
+                        {/*    style={{marginBottom:20,backgroundColor:"#E8E8E8",float:"left", fontWeight:600, height:30, padding:5}}*/}
+                        {/*>Number of items per page</p> &nbsp;*/}
+                        <Input addonBefore="Number of items per page" type="number" onChange={this.onChange} style={{ height:35, marginBottom:15,width:250}} defaultValue={10}/>
+                    </div>
                     <Table
                         className="table-detail"
                         columns={columns}
@@ -131,7 +137,7 @@ class RecommedAction extends React.Component {
                         rowKey={record => record.index}
                     />
                 </Card>
-            </div>
+            </RecommendActionWrapper>
         );
     }
 }

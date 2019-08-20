@@ -1,5 +1,6 @@
 import React from "react";
-import { Table,Icon } from 'antd';
+import { Table,Icon, Card } from 'antd';
+import {c} from "./VariablesConfig.style"
 import axios from "axios";
 
 class VariablesConfig extends React.Component {
@@ -92,12 +93,12 @@ class VariablesConfig extends React.Component {
         const { startValue, endValue, endOpen } = this.state;
 
         return (
-            <div>
-                <div>
+            <VariablesConfigWrapper>
+                <Card>
                     <h2>VariablesConfig</h2>
-                </div>
+                </Card>
 
-                <div className="table">
+                <Card style={{marginTop:10}}>
 
                     <Table
                         id="table-detail"
@@ -108,10 +109,10 @@ class VariablesConfig extends React.Component {
                         // pagination={{ defaultPageSize: 20}}
                         rowKey={record => record.index}
                     />
-                </div>
+                </Card>
 
 
-            </div>
+            </VariablesConfigWrapper>
 
         )
     }

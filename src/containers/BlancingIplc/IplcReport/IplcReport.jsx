@@ -1,5 +1,6 @@
 import React from "react";
 import { Table ,message, Card} from 'antd';
+import {IplcReportWrapper} from "./IplcReport.style"
 import axios from "axios";
 import Search from "antd/lib/input/Search";
 
@@ -103,8 +104,8 @@ class IplcReport extends React.Component {
 
 
         return (
-            <div>
-                <Card style={{marginBottom:20}}>
+            <IplcReportWrapper>
+                <Card style={{marginBottom:10}}>
                     <h2>
                         IPLC
                     </h2>
@@ -120,7 +121,7 @@ class IplcReport extends React.Component {
                         rowKey={record => record.index}
                     />
                 </Card>
-            </div>
+            </IplcReportWrapper>
 
         )
     }

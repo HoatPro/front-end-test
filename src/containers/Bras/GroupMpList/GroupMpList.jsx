@@ -1,20 +1,11 @@
 import React from "react";
 import { GroupMpListWrapper } from "./GroupMpList.style";
 
-import {Collapse, message, Table,Card} from 'antd';
-import Search from "antd/lib/input/Search";
-
+import {message, Table,Card,Input,Row,Col,Button,Select} from 'antd';
+const { Search } = Input;
+const {Option}=Select;
 import  axios from 'axios'
 
-const {Panel}=Collapse;
-
-const customPanelStyle = {
-    background: '#f7f7f7',
-    borderRadius: 4,
-    marginBottom: 24,
-    border: 0,
-    overflow: 'hidden',
-};
 class GroupMpList extends React.Component {
     constructor(props){
         super(props);
@@ -48,7 +39,25 @@ class GroupMpList extends React.Component {
             message.error("GET data error!!!")
         }
     }
+    handleSearch=(value)=>{
+        console.log(value)
+    }
+     handleChange=(value)=> {
+        const {dataTable}=this.state;
+        const newDataTable=dataTable.map((data,index)=>{
+            if(data.dt.a==value){
+              return{
+                  index:index+1,
+                  data
+              }
+            }
+        })
 
+         this.setState({
+             dataTable:newDataTable
+         })
+
+    }
     render() {
 
         const columns = [
@@ -91,21 +100,21 @@ class GroupMpList extends React.Component {
                         children:[
                             {
                                 title: 'IPv4',
-                                key: 'ipv4',
+                                key: 'ipv4CCU',
                                 render:record=>{
                                     return record.dt.sumD
                                 }
                             },
                             {
                                 title: 'IPv6',
-                                key: 'ipv6',
+                                key: 'ipv6CCU',
                                 render:record=>{
                                     return record.dt.sumE
                                 }
                             },
                             {
                                 title: 'NAT',
-                                key: 'nat',
+                                key: 'natCCU',
                                 render:record=>{
                                     return record.dt.sumF
                                 }
@@ -118,7 +127,7 @@ class GroupMpList extends React.Component {
                         children: [
                             {
                                 title: 'Uplink',
-                                key: 'uplink',
+                                key: 'uplinkMax',
                                 render:record=>{
                                     return record.dt.sumG
                                 }
@@ -126,21 +135,21 @@ class GroupMpList extends React.Component {
                             },
                             {
                                 title: 'Downlink',
-                                key: 'downlink',
+                                key: 'downlinkMax',
                                 render:record=>{
                                     return record.dt.sumH
                                 }
                             },
                             {
                                 title: 'Equal',
-                                key: 'equal',
+                                key: 'equalMax',
                                 render:record=>{
                                     return record.dt.i
                                 }
                             },
                             {
                                 title: 'B2B',
-                                key: 'b2b',
+                                key: 'b2bMax',
                                 render:record=>{
                                     return record.dt.sumJ
                                 }
@@ -155,26 +164,25 @@ class GroupMpList extends React.Component {
                 children: [
                     {
                         title: 'Uplink',
-                        dataIndex: 'Uplink',
                         key: 'Uplink',
                         children:[
                             {
                                 title: '10G',
-                                key: '10g',
+                                key: '10g-uplink',
                                 render:record=>{
                                     return record.dt.k
                                 }
                             },
                             {
                                 title: '40G',
-                                key: '40g',
+                                key: '40g-uplink',
                                 render:record=>{
                                     return record.dt.l
                                 }
                             },
                             {
                                 title: '100G',
-                                key: '100g',
+                                key: '100g-uplink',
                                 render:record=>{
                                     return record.dt.m
                                 }
@@ -189,21 +197,21 @@ class GroupMpList extends React.Component {
                         children:[
                             {
                                 title: '10G',
-                                key: '10g',
+                                key: '10g-downlink',
                                 render:record=>{
                                     return record.dt.n
                                 }
                             },
                             {
                                 title: '40G',
-                                key: '40g',
+                                key: '40g-downlink',
                                 render:record=>{
                                     return record.dt.o
                                 }
                             },
                             {
                                 title: '100G',
-                                key: '100g',
+                                key: '100g-downlink',
                                 render:record=>{
                                     return record.dt.p
                                 }
@@ -218,21 +226,21 @@ class GroupMpList extends React.Component {
                         children:[
                             {
                                 title: '1G',
-                                key: '1g',
+                                key: '1g-equal',
                                 render:record=>{
                                     return record.dt.q
                                 }
                             },
                             {
                                 title: '10G',
-                                key: '10g',
+                                key: '10g-equal',
                                 render:record=>{
                                     return record.dt.r
                                 }
                             },
                             {
                                 title: '40G',
-                                key: '40g',
+                                key: '40g-equal',
                                 render:record=>{
                                     return record.dt.s
                                 }
@@ -254,21 +262,21 @@ class GroupMpList extends React.Component {
                         children:[
                             {
                                 title: '10G',
-                                key: '10g',
+                                key: '10g-b2b',
                                 render:record=>{
                                     return record.dt.u
                                 }
                             },
                             {
                                 title: '40G',
-                                key: '40g',
+                                key: '40g-b2b',
                                 render:record=>{
                                     return record.dt.v
                                 }
                             },
                             {
                                 title: '100G',
-                                key: '100g',
+                                key: '100g-b2b',
                                 render:record=>{
                                     return record.dt.w
                                 }
@@ -283,28 +291,28 @@ class GroupMpList extends React.Component {
                 children: [
                     {
                         title: 'Uplink',
-                        key: 'Uplink',
+                        key: 'Uplink-req',
                         render:record=>{
                             return record.dt.x
                         }
                     },
                     {
                         title: 'Downlink',
-                        key: 'Downlink',
+                        key: 'Downlink-req',
                         render:record=>{
                             return record.dt.y
                         }
                     },
                     {
                         title: 'Equal',
-                        key: 'equal',
+                        key: 'equal-req',
                         render:record=>{
                             return record.dt.z
                         }
                     },
                     {
                         title: 'B2B',
-                        key: 'b2b',
+                        key: 'b2b-req',
                         render:record=>{
                             return record.dt.aa
                         }
@@ -324,21 +332,21 @@ class GroupMpList extends React.Component {
                     },
                     {
                         title: 'Downlink',
-                        key: 'Downlink',
+                        key: 'Downlink to add',
                         render:record=>{
                             return record.dt.ac
                         }
                     },
                     {
                         title: 'Equal',
-                        key: 'equal',
+                        key: 'equal to add',
                         render:record=>{
                             return record.dt.ad
                         }
                     },
                     {
                         title: 'B2B',
-                        key: 'b2b',
+                        key: 'b2b to add',
                         render:record=>{
                             return record.dt.ae
                         }
@@ -351,18 +359,50 @@ class GroupMpList extends React.Component {
 
         return (
             <GroupMpListWrapper>
-              <Card style={{width:1730,marginBottom:10}}>
+              <Card style={{marginBottom:10}}>
+                  <h2>Group MP List</h2>
+             <Row>
+                 <Col span={8} style={{width:300, marginRight:10}}>
+                     <h4>Search by name</h4>
+                     <Search
+                         style={{width:280}}
+                         placeholder="Search by name..."
+                         onSearch={value => this.handleSearch(value)}
+                         style={{width:200}}
+                         enterButton
+                     />
+                 </Col>
+                 <Col span={8}  style={{ width:200,marginRight:50}} >
+                     <h4>Search by Region</h4>
+                     <Select
+                         style={{ width:180}}
+                         defaultValue="all"
+                         onChange={value => this.handleChange(value)}>
+                         <Option value="all">All</Option>
+                         <Option value="1" key={1}>1</Option>
+                         <Option value="2" key={2}>2</Option>
+                         <Option value="3" key={3}>3 </Option>
+                         <Option value="4" key={4}>4</Option>
+                         <Option value="5" key={5}>5</Option>
+                         <Option value="6" key={6}>6</Option>
+                         <Option value="7" key={7}>7</Option>
 
-                <h2>Group MP List</h2>
-                <h4>Search by name</h4>
-                <Search style={{ marginBottom:20,width:200}} placeholder="search by name....."/>
+                     </Select>
+                  </Col>
+                 <Col span={8}>
+                     <h4> Export</h4>
+                     <Button type="primary" style={{width:180}}> Export to excel file </Button>
+                 </Col>
+             </Row>
               </Card>
-              <Card style={{width:1730}}>
+              <Card >
                   <Table
+                      scroll={{x:true}}
                       columns={columns}
                       dataSource={this.state.dataTable}
                       bordered
                       size="middle"
+                      rowKey={record=>record.index}
                   />
               </Card>
 

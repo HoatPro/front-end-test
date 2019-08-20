@@ -1,7 +1,37 @@
 import React from "react";
-import { Table, Card } from 'antd';
+import { Table, Card,Icon } from 'antd';
+import {HistoryWrapper} from "./History.style"
 import axios from "axios";
+import moment from "moment";
+const successMessage = ["success", "ok"];
+const errorMessage = ["fail", "error"];
 
+function IconRow(props) {
+    const message = props.data.toLowerCase();
+    let include = false;
+    let success = false;
+    successMessage.forEach((item) => {
+        if (message.includes(item)) {
+            include = true;
+            success = true;
+        }
+    })
+    errorMessage.forEach((item) => {
+        if (message.includes(item)) {
+            include = true;
+        }
+    })
+    return (
+        <div>
+            {include && (
+                <Icon
+                    type={success ? "check" : "close"}
+                    style={{color: success ? "green" : "red", fontSize: '16px',fontWeight:800}}
+                />
+            )}  {message}
+        </div>
+    );
+}
 class History extends React.Component {
     constructor(props){
         super(props);
@@ -109,7 +139,8 @@ class History extends React.Component {
                 title: 'Timestamp',
                 key:'time_stamp',
                 render:record=>{
-                    return record.dataObj.time_stamp
+                    const time=record.dataObj.time_stamp
+                    return moment(time).format("YYYY/MM/DD HH:mm:ss")
                 }
 
             },
@@ -117,31 +148,28 @@ class History extends React.Component {
                 title: 'Uptime Result',
                 key:'uptime_result',
                 render:record=>{
-                    return record.dataObj.uptime_result
+                    return  <IconRow data={ record.dataObj.uptime_result} />
                 }
-
             },
             {
                 title: 'Pre Jsnap Result',
                 key:'pre_jsnap_result',
                 render:record=>{
-                    return record.dataObj.pre_jsnap_result
+                    return  <IconRow data={ record.dataObj.pre_jsnap_result} />
                 }
-
             },
             {
                 title: 'Action Result',
                 key:'action_result',
-                render:record=>{
-                    return record.dataObj.action_result
+                render:record=> {
+                    return <IconRow data={record.dataObj.action_result}/>
                 }
-
             },
             {
                 title: 'Post Jsnap Result',
                 key:'post_jsnap_result',
                 render:record=>{
-                    return record.dataObj.post_jsnap_result
+                    return <IconRow data={record.dataObj.post_jsnap_result}/>
                 }
 
             },
@@ -149,7 +177,7 @@ class History extends React.Component {
                 title: 'Compare Jsnap Result',
                 key:'compare_jsnap_result',
                 render:record=>{
-                    return record.dataObj.compare_jsnap_result
+                    return <IconRow data={record.dataObj.compare_jsnap_result}/>
                 }
 
             },
@@ -157,7 +185,7 @@ class History extends React.Component {
                 title: 'Pic State',
                 key:'pic_state',
                 render:record=>{
-                    return record.dataObj.pic_state
+                    return <IconRow data={record.dataObj.pic_state}/>
                 }
 
             },
@@ -168,14 +196,15 @@ class History extends React.Component {
         const { startValue, endValue, endOpen } = this.state;
 
         return (
-            <div>
-                <Card  style={{fontWeight:600, marginBottom:15,width:1640 }}>
+            <HistoryWrapper>
+                <Card  style={{fontWeight:600, marginBottom:10 }}>
                     <h2>History</h2>
                 </Card>
 
-              <Card style={{width:1640}} >
+              <Card  >
                   <div >
                       <Table
+                          scroll={{x:true}}
                           columns={columns}
                           dataSource={this.state.dataTable}
                           bordered
@@ -184,7 +213,7 @@ class History extends React.Component {
                       />
                   </div>
             </Card>
-            </div>
+            </HistoryWrapper>
 
 
 

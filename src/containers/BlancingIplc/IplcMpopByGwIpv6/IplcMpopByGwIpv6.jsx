@@ -1,5 +1,6 @@
 import React from "react";
 import {Table, message,Card} from 'antd';
+import {IplcMpopByGwIpv6Wrapper} from "./IplcMpopByGwIpv6.style"
 
 import axios from "axios";
 import Search from "antd/lib/input/Search";
@@ -123,10 +124,10 @@ class IplcMpopByGwIpv6 extends React.Component {
             },
         ];
       const {dataTable}=this.state;
-      console.log(dataTable);
+
         return (
-            <div>
-                <Card style={{marginBottom:20}}>
+            <IplcMpopByGwIpv6Wrapper>
+                <Card style={{marginBottom:10}}>
                     <h2>
                         IPLC MPOP by GW
                     </h2>
@@ -142,7 +143,7 @@ class IplcMpopByGwIpv6 extends React.Component {
                     rowKey={record => record.index}
                 />
                 </Card>
-            </div>
+            </IplcMpopByGwIpv6Wrapper>
 
         )
     }

@@ -1,5 +1,6 @@
 import React from "react";
 import { Table, message, Card,Icon } from 'antd';
+import {AllDevicesWrapper} from "./AllDevices.style"
 import axios from "axios";
 import Search from "antd/lib/input/Search";
 
@@ -171,11 +172,11 @@ class AllDevice extends React.Component {
             },
             {
                 title: 'Action',
-                key: 'choice',
+                key: 'action',
                 render:record=>{
                     return(<div >
-                        <Icon type="edit" style={{ width:26, height:26,backgroundColor:"#fbbd08",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>
-                        <Icon type="clock-circle"  style={{ width:26, height:26,backgroundColor:"#00b5ad",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>
+                        <Icon type="edit" style={{ width:26, height:26,backgroundColor:"#fbbd08",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>&nbsp;
+                        <Icon type="clock-circle"  style={{ width:26, height:26,backgroundColor:"#00b5ad",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>&nbsp;
                         <Icon type="delete"  style={{ width:26, height:26,backgroundColor:"#db2828",padding:5,color:"white",fontWeight:700,borderRadius:5}}/>
                     </div>)
                 }
@@ -184,7 +185,7 @@ class AllDevice extends React.Component {
         ];
 
         return (
-           <div>
+           <AllDevicesWrapper>
                <Card style={{width:"100%", marginBottom:20}}>
                    <h2> All Devices</h2>
                    <div  style={{width:200}}>
@@ -194,6 +195,7 @@ class AllDevice extends React.Component {
                </Card>
                <Card style={{width:"100%"}}>
                    <Table
+                       scroll={{x:true}}
                        className="table-detail"
                        columns={columns}
                        dataSource={this.state.dataTable}
@@ -202,7 +204,7 @@ class AllDevice extends React.Component {
                    />
 
                </Card>
-           </div>
+           </AllDevicesWrapper>
 
 
         )

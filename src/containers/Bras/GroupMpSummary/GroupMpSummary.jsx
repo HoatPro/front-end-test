@@ -8,16 +8,9 @@ import  axios from 'axios'
 import analyzerConstants from "../../../../config"
 const dateFormat = 'DD-MM-YYYY';
 import moment from "moment";
-const { Option } = Select;
+
 const {TextArea}=Input
 
-const customPanelStyle = {
-    background: '#f7f7f7',
-    borderRadius: 4,
-    marginBottom: 24,
-    border: 0,
-    overflow: 'hidden',
-};
 class GroupMpSummary extends React.Component {
     constructor(props){
         super(props);
@@ -148,7 +141,6 @@ class GroupMpSummary extends React.Component {
     }
 
     render() {
-        console.log(this.state.dataTable)
         const columns = [
             {
                 title: 'Vùng',
@@ -185,21 +177,21 @@ class GroupMpSummary extends React.Component {
                         children: [
                             {
                                 title: 'IPv4',
-                                key: 'ipv4',
+                                key: 'ipv4CCU',
                                 render: record => {
                                     return record.data.data.sumD
                                 }
                             },
                             {
                                 title: 'IPv6',
-                                key: 'ipv6',
+                                key: 'ipv6CCU',
                                 render: record => {
                                     return record.data.data.sumE
                                 }
                             },
                             {
                                 title: 'NAT',
-                                key: 'nat',
+                                key: 'natCCU',
                                 render: record => {
                                     return record.data.data.sumF
                                 }
@@ -212,7 +204,7 @@ class GroupMpSummary extends React.Component {
                         children: [
                             {
                                 title: 'Uplink',
-                                key: 'uplink-10g',
+                                key: 'uplink-10g-add',
                                 render: record => {
                                     return record.data.data.sumG
                                 }
@@ -220,21 +212,21 @@ class GroupMpSummary extends React.Component {
                             },
                             {
                                 title: 'Downlink',
-                                key: 'downlink-10g',
+                                key: 'downlink-10g-add',
                                 render: record => {
                                     return record.data.data.sumH
                                 }
                             },
                             {
                                 title: 'Equal',
-                                key: 'equal-10g',
+                                key: 'equal-10g-add',
                                 render: record => {
                                     return record.data.data.i
                                 }
                             },
                             {
                                 title: 'B2B',
-                                key: 'b2b-10g',
+                                key: 'b2b-10g-add',
                                 render: record => {
                                     return record.data.data.sumJ
                                 }
@@ -248,21 +240,21 @@ class GroupMpSummary extends React.Component {
                 title: 'Action',
                 key:'action',
                     render:record => {
-                    return <TextArea>{record.action}</TextArea>
+                    return <TextArea defaultValue={record.action}/>
                     }
                     },
                     {
                         title: 'Deadline',
                         key:'deadlines',
                         render:record => {
-                            return <TextArea>{record.deadline}</TextArea>
+                            return <TextArea defaultValue={record.deadline} />
                         }
                     },
                     {
                         title: 'Assignment',
                         key:'assignment',
                        render:record => {
-                           return <TextArea>{record.assignment}</TextArea>
+                           return <TextArea defaultValue={record.assignment}/>
                        }
                     },
                     {
@@ -348,7 +340,7 @@ class GroupMpSummary extends React.Component {
                         columns={columns}
                         dataSource={this.state.dataTable}
                         bordered
-                        size="middle"
+
                         rowKey={record=>record.data.index}
                     />
                 </Card>

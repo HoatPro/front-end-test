@@ -1,6 +1,6 @@
 import React from "react";
 import { Table ,message,Card} from 'antd';
-
+import {EqualReportWrapper} from "./EqualReport.style"
 import axios from "axios";
 import Search from "antd/lib/input/Search";
 
@@ -88,8 +88,8 @@ class EqualReport extends React.Component {
 
 
         return (
-            <div>
-                <Card style={{marginBottom:20}}>
+            <EqualReportWrapper>
+                <Card style={{marginBottom:10}}>
                     <h2>
                        Equal
                     </h2>
@@ -105,7 +105,7 @@ class EqualReport extends React.Component {
                         // rowKey={record => record.name}
                     />
                 </Card>
-            </div>
+            </EqualReportWrapper>
 
         )
     }
