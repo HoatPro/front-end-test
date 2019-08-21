@@ -1,23 +1,24 @@
-
 import React from "react";
-import { Table ,message,Card,Icon,Button,Input} from 'antd';
-import { CgnatPreferWrapper } from "./CgnatPrefer.style";
+import {Table, message, Card, Icon, Button, Input} from 'antd';
+import {CgnatPreferWrapper} from "./CgnatPrefer.style";
 import axios from "axios";
 import _ from 'lodash';
 import ExportJsonExcel from 'js-export-excel';
-const { Search } = Input;
+
+const {Search} = Input;
 
 class CgnatPrefer extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
-            dataTable:[],
+        this.state = {
+            dataTable: [],
             startValue: null,
             endValue: null,
             endOpen: false,
         }
     }
-    async componentDidMount(){
+
+    async componentDidMount() {
         const options = {
             method: "GET",
             url: "https://netd.ast.fpt.net/netd-api/api/cgnat-prefer"
@@ -26,35 +27,36 @@ class CgnatPrefer extends React.Component {
             status,
             data: {data}
         } = await axios(options);
-        if(status){
+        if (status) {
             console.log(data);
-            let dataObject=data.map((dataObj,index)=>{
-                return{
-                    "index":index+1,
+            let dataObject = data.map((dataObj, index) => {
+                return {
+                    "index": index + 1,
                     dataObj
                 }
             });
             message.success("GET CGNAT Prefer  successfull!")
             this.setState({
-                dataTable:dataObject
+                dataTable: dataObject
             })
         }
     }
+
     downloadExcel = () => {
-        const option={};
-        const {dataTable}=this.state;
+        const option = {};
+        const {dataTable} = this.state;
         console.log(dataTable)
-        const dataExcel=[];
-        for(let i in dataTable){
-            if(dataTable){
-                let obj={
-                    "Index":dataTable[i].index,
-                    "Region":dataTable[i].dataObj.mpRegion,
-                    "Group Mp":dataTable[i].dataObj.mpGroup,
-                    "Mp":dataTable[i].dataObj.name,
-                    "MP Ip":dataTable[i].dataObj.ip,
-                    "CGNAT":dataTable[i].dataObj.cgnat,
-                    "CGNAT Ip":dataTable[i].dataObj.cgnat_ip
+        const dataExcel = [];
+        for (let i in dataTable) {
+            if (dataTable) {
+                let obj = {
+                    "Index": dataTable[i].index,
+                    "Region": dataTable[i].dataObj.mpRegion,
+                    "Group Mp": dataTable[i].dataObj.mpGroup,
+                    "Mp": dataTable[i].dataObj.name,
+                    "MP Ip": dataTable[i].dataObj.ip,
+                    "CGNAT": dataTable[i].dataObj.cgnat,
+                    "CGNAT Ip": dataTable[i].dataObj.cgnat_ip
 
 
                 }
@@ -63,26 +65,26 @@ class CgnatPrefer extends React.Component {
             }
         }
         option.fileName = 'CGNAT_Prefer'
-        option.datas=[
+        option.datas = [
             {
-                sheetData:dataExcel,
-                sheetName:'sheet',
-                sheetFilter:['Index','Region','Group Mp','Mp','Mp Ip','CGNAT','CGNAT Ip'],
-                sheetHeader:['Index','Region','Group Mp','Mp','Mp Ip','CGNAT','CGNAT Ip'],
+                sheetData: dataExcel,
+                sheetName: 'sheet',
+                sheetFilter: ['Index', 'Region', 'Group Mp', 'Mp', 'Mp Ip', 'CGNAT', 'CGNAT Ip'],
+                sheetHeader: ['Index', 'Region', 'Group Mp', 'Mp', 'Mp Ip', 'CGNAT', 'CGNAT Ip'],
             }
         ];
 
         var toExcel = new ExportJsonExcel(option);
         toExcel.saveExcel();
     }
-    handleSearch=(value)=>{
-        const {dataTable}=this.state;
-      const filteredList= dataTable.filter(function (item) {
+    handleSearch = (value) => {
+        const {dataTable} = this.state;
+        const filteredList = dataTable.filter(function (item) {
             const lowerCaseSearchByName = value.trim().toLowerCase();
             return item.dataObj.mpGroup == lowerCaseSearchByName.toUpperCase();
         });
         this.setState({
-           dataTable:filteredList
+            dataTable: filteredList
         })
     }
 
@@ -96,42 +98,42 @@ class CgnatPrefer extends React.Component {
             {
                 title: 'Region',
                 key: 'mpRegion',
-                render:record=>{
+                render: record => {
                     return record.dataObj.mpRegion
                 }
             },
             {
                 title: 'Group Mp',
                 key: 'mpGroup',
-                render:record=>{
+                render: record => {
                     return record.dataObj.mpGroup
                 }
             },
             {
                 title: 'MP',
                 key: 'mp',
-                render:record=>{
+                render: record => {
                     return record.dataObj.name
                 }
             },
             {
                 title: 'MP Ip',
                 key: 'ip',
-                render:record=>{
+                render: record => {
                     return record.dataObj.ip
                 }
             },
             {
                 title: 'CGNAT',
                 key: 'cgnat',
-                render:record=>{
+                render: record => {
                     return record.dataObj.cgnat
                 }
             },
             {
                 title: 'CGNAT Ip',
                 key: 'cgnat_ip',
-                render:record=>{
+                render: record => {
                     return record.dataObj.cgnat_ip
                 }
             },
@@ -141,15 +143,15 @@ class CgnatPrefer extends React.Component {
         return (
             <CgnatPreferWrapper>
 
-                <Card style={{marginBottom:10}}>
+                <Card style={{marginBottom: 10}}>
 
-                        <Search
-                            placeholder="Search by name..."
-                            onSearch={value => this.handleSearch(value)}
-                            style={{ width:180,marginRight:20 }}
-                            enterButton
-                        />
-                        <Button type="primary"  onClick={this.downloadExcel}>Export to excel</Button>
+                    <Search
+                        placeholder="Search by name..."
+                        onSearch={value => this.handleSearch(value)}
+                        style={{width: 180, marginRight: 20}}
+                        enterButton
+                    />
+                    <Button type="primary" onClick={this.downloadExcel}>Export to excel</Button>
 
                 </Card>
                 <Card>

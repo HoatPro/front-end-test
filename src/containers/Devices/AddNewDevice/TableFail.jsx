@@ -1,47 +1,48 @@
 import React from "react";
-import {Table, Icon,Alert} from 'antd';
+import {Table, Icon, Alert} from 'antd';
 import moment from 'moment';
 
-class TableFail  extends React.Component {
+class TableFail extends React.Component {
     constructor(props) {
         super(props);
-        this.state={
-            dataTable:[],
-            successPercentCheck:null
+        this.state = {
+            dataTable: [],
 
         }
     }
-    componentDidMount(): void {
 
+    componentDidMount(): void {
+        console.log(this.props);
+    }
+
+    componentWillReceiveProps(nextProps) {
         const portList = [];
-        const dataGet=this.props.dataGet;
-        const successPercentCheck=this.props.successPercentCheck;
-        for (let device of dataGet) {
+        const dataFail = nextProps.dataFail;
+        for (let device of dataFail) {
             for (let port of device.ports) {
                 if (!port.requestOpsviewResult || !port.requestOpsviewResult.success) {
                     portList.push({...port, device: device});
                 }
             }
         }
-        const dataObj=portList.map((data,index)=>{
+        const dataObj = portList.map((data, index) => {
             return {
-                index:index+1,
+                index: index + 1,
                 data
             }
         })
         this.setState({
-            dataTable:dataObj,
-            successPercentCheck:successPercentCheck
+            dataTable: dataObj,
         })
     }
 
     render() {
-        const {dataTable,successPercent}=this.state;
+        const {dataTable} = this.state;
         const columns = [
             {
                 title: 'Index',
                 key: 'index',
-                render:record=>{
+                render: record => {
                     return record.index
                 }
 
@@ -49,108 +50,114 @@ class TableFail  extends React.Component {
             {
                 title: 'Times',
                 key: 'time',
-                render:record=>{
-                    const times=record.data.time
-                    return  moment(times).format("YYYY-MM-DD HH:mm:ss")
+                render: record => {
+                    const times = record.data.time
+                    return moment(times).format("YYYY-MM-DD HH:mm:ss")
                 }
 
             },
             {
                 title: 'Device',
                 key: 'device',
-                render:record=>{
+                render: record => {
                     return record.data.device.groupName
                 }
             },
             {
                 title: 'Ip',
                 key: 'ip',
-                render:record=>{
+                render: record => {
                     return record.data.device.ip
                 }
             },
             {
                 title: 'Function',
                 key: 'function',
-                render:record=> {
+                render: record => {
                     return record.data.device.function
                 }
             },
             {
                 title: 'Aera',
                 key: 'aera',
-                render:record=> {
+                render: record => {
                     return record.data.device.area
                 }
             },
             {
                 title: 'Room',
                 key: 'room',
-                render:record=>{
+                render: record => {
                     return record.data.device.method
                 }
             },
             {
                 title: 'Rack',
                 key: 'rack',
-                render:record=>{
+                render: record => {
                     return record.data.device.rack
                 }
             },
             {
                 title: 'Name',
                 key: 'name',
-                render:record=>{
+                render: record => {
                     return record.data.device.name
                 }
             },
             {
                 title: 'IfIndex',
                 key: 'ifIndex',
-                render:record=>{
+                render: record => {
                     return record.data.ifindex
                 }
             },
             {
                 title: 'Description',
                 key: 'description',
-                render:record=>{
+                render: record => {
                     return record.data.description
                 }
             },
             {
                 title: 'Task Ids',
                 key: 'task-id',
-                render:record=>{
-                    const taskList=record.data.requestOpsviewResult;
-                    const z=[];
-                    taskList.map(task=>{
-                        z.push(<div>{
-                            task.existed ?
-                                <Icon type="check" style={{color:"green"}}/> :
-                                <Icon type="close" style={{color:"red"}}/>
+                render: record => {
+                    const row = record.data;
+                    return <div>
+                        {
+                            (row.requestOpsviewResult) ?
+                                row.requestOpsviewResult.map((e, idx) => (
+                                    <div>
+                                        <div>
+                                            {
+                                                e.existed ?
+                                                    <Icon type="check" style={{color: "green"}}/> :
+                                                    <Icon type="close" style={{color: "red"}}/>
+                                            } <b>{e.attributeLabel}:</b> {e.taskId}
+                                        </div>
+                                    </div>
+                                )) : null
                         }
-                            <b>{task.attributeLabel}:</b> {task.taskId}</div>)
-                    });
-                    return z
+                    </div>
                 }
             },
 
         ]
-        const tableData=[]
-        if(successPercent<100){
+        const tableData = []
+        if (dataTable.length > 0) {
             tableData.push(
                 <Table
-                    style={{fontWeight:500}}
+                    style={{fontWeight: 500}}
                     bordered
                     dataSource={dataTable}
                     columns={columns}
-                    rowKey={record=>record.index}/>
+                    rowKey={record => record.index}/>
             )
 
-        }else{
+        } else {
             tableData.push(
-                <Alert message="There is no existed items!" type="warning"  style={{fontWeight:650}}/>
+                <Alert message="There is no existed items!" type="warning" style={{fontWeight: 650}}/>
             )
         }
 
@@ -162,4 +169,5 @@ class TableFail  extends React.Component {
         );
     }
 }
+
 export default TableFail;

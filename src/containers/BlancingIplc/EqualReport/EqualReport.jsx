@@ -1,20 +1,20 @@
 import React from "react";
-import { Table ,message,Card} from 'antd';
+import {Table, message, Card} from 'antd';
 import {EqualReportWrapper} from "./EqualReport.style"
 import axios from "axios";
 import Search from "antd/lib/input/Search";
 
 
-
 class EqualReport extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
-            dataTable:[],
+        this.state = {
+            dataTable: [],
 
         }
     }
-    async componentDidMount(){
+
+    async componentDidMount() {
         const options = {
             method: "GET",
             url: "https://netd.ast.fpt.net/netd-api/api/get-equal-report-data"
@@ -23,10 +23,10 @@ class EqualReport extends React.Component {
             status,
             data: {data}
         } = await axios(options);
-        if(status){
+        if (status) {
             message.success("GET data successfull!")
             this.setState({
-                dataTable:data
+                dataTable: data
             })
         }
     }
@@ -47,9 +47,9 @@ class EqualReport extends React.Component {
             {
                 title: 'Equal-Rate(G)',
                 key: 'ipNextHop',
-                render:record=>{
-                    let rate = Math.round(record.trafficOut/1024, 2)
-                   return rate
+                render: record => {
+                    let rate = Math.round(record.trafficOut / 1024, 2)
+                    return rate
                 }
 
             },
@@ -62,24 +62,24 @@ class EqualReport extends React.Component {
             {
                 title: 'Equal-Congest',
                 key: 'eqaul-congest',
-                render:record => {
-                    let rate = Math.round(record.trafficOut/1024, 2)
-                    return (0.8*record.speed - rate).toFixed(2)
+                render: record => {
+                    let rate = Math.round(record.trafficOut / 1024, 2)
+                    return (0.8 * record.speed - rate).toFixed(2)
                 }
 
             },
             {
                 title: 'Equal-Free',
                 key: 'equal-free',
-                render:record => {
-                    let rate = Math.round(record.trafficOut/1024, 2)
-                    return (0.75*record.speed- rate).toFixed(2)
+                render: record => {
+                    let rate = Math.round(record.trafficOut / 1024, 2)
+                    return (0.75 * record.speed - rate).toFixed(2)
                 }
 
             },
             {
                 title: 'Equal-Device',
-                dataIndex:"neighborName",
+                dataIndex: "neighborName",
                 key: 'equal-device',
 
             },
@@ -89,12 +89,12 @@ class EqualReport extends React.Component {
 
         return (
             <EqualReportWrapper>
-                <Card style={{marginBottom:10}}>
+                <Card style={{marginBottom: 10}}>
                     <h2>
-                       Equal
+                        Equal
                     </h2>
                     <h4>Search by name</h4>
-                    <Search style={{width:300,marginTop:8,marginBottom:30}} placeholder="Search by name..."/>
+                    <Search style={{width: 300, marginTop: 8, marginBottom: 30}} placeholder="Search by name..."/>
                 </Card>
                 <Card>
                     <Table

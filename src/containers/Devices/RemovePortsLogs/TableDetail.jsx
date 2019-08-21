@@ -1,72 +1,73 @@
+import React from "react";
+import {Table, Icon} from 'antd';
 
-import React  from "react";
-import { Table,Icon } from 'antd';
-
-class TableDetail extends React.Component{
+class TableDetail extends React.Component {
     constructor(props) {
         super(props);
-        this.state={
-            dataTable:[]
+        this.state = {
+            dataTable: []
         }
     }
-    componentWillReceiveProps=(nextProps)=> {
-        const dataTable=nextProps.data;
-        const portsList= dataTable.map((data,index)=>{
-            return{
-                ports:data.data.ports
+
+    componentWillReceiveProps = (nextProps) => {
+        const dataTable = nextProps.data;
+        const portsList = dataTable.map((data, index) => {
+            return {
+                ports: data.data.ports
             }
         })
-        const dataPorts=portsList[0].ports.map((port,index)=>{
-            return{
-                index:index+1,
+        const dataPorts = portsList[0].ports.map((port, index) => {
+            return {
+                index: index + 1,
                 port
             }
         })
         this.setState({
-            dataTable:dataPorts
-        })
-    }
-    componentDidMount(): void {
-        console.log(this.props)
-        const dataTable=this.props.data;
-        const portsList= dataTable.map((data,index)=>{
-            return{
-                ports:data.data.ports
-            }
-        })
-        const dataPorts=portsList[0].ports.map((port,index)=>{
-            return{
-                index:index+1,
-                port
-            }
-        })
-        this.setState({
-            dataTable:dataPorts
+            dataTable: dataPorts
         })
     }
 
-    render(){
-        const {dataTable}=this.state;
+    componentDidMount(): void {
+        console.log(this.props)
+        const dataTable = this.props.data;
+        const portsList = dataTable.map((data, index) => {
+            return {
+                ports: data.data.ports
+            }
+        })
+        const dataPorts = portsList[0].ports.map((port, index) => {
+            return {
+                index: index + 1,
+                port
+            }
+        })
+        this.setState({
+            dataTable: dataPorts
+        })
+    }
+
+    render() {
+        const {dataTable} = this.state;
         const columns = [
             {
                 title: 'Index',
                 key: 'index',
-                render:record=>{
+                render: record => {
                     return record.index
                 }
             },
             {
                 title: 'Name',
                 key: 'name',
-                render:record=>{
+                render: record => {
                     // return record.data.ports.name
                 }
             },
             {
                 title: 'IfIndex',
                 key: 'ifindex',
-                render:record=>{
-                   return record.port.ifindex
+                render: record => {
+                    return record.port.ifindex
                 }
             },
             {
@@ -93,35 +94,36 @@ class TableDetail extends React.Component{
             {
                 title: 'Task ids',
                 key: 'task ids',
-                render:record=> {
-                   return record.port.requestOpsviewResult.taskId
+                render: record => {
+                    return record.port.requestOpsviewResult.taskId
                 }
 
             },
             {
                 title: 'Result',
                 key: 'result',
-                render:record=>{
-                    const result=record.port.requestOpsviewResult
-                    if(result.success===true){
-                        return  <Icon type="check" style={{color:"green"}}/>
-                    }else{
-                        return    <Icon type="close" style={{color:"red"}}/>
+                render: record => {
+                    const result = record.port.requestOpsviewResult
+                    if (result.success === true) {
+                        return <Icon type="check" style={{color: "green"}}/>
+                    } else {
+                        return <Icon type="close" style={{color: "red"}}/>
                     }
 
                 }
             },
         ];
 
-        return(
+        return (
             <Table
                 bordered
                 columns={columns}
                 dataSource={dataTable}
                 pagination={false}
-                rowKey={record=>record.index}
+                rowKey={record => record.index}
             />
         )
     }
 }
-export  default TableDetail
+
+export default TableDetail

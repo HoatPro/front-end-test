@@ -1,6 +1,6 @@
 import React from "react";
 import {Table, message, Card} from 'antd';
-import { EqualMpopByGwIpv4Wrapper} from "./EqualMpopByGwIpv4.style"
+import {EqualMpopByGwIpv4Wrapper} from "./EqualMpopByGwIpv4.style"
 import axios from "axios";
 import Search from "antd/lib/input/Search";
 
@@ -24,16 +24,18 @@ class EqualMpopByGwIpv4 extends React.Component {
         } = await axios(options);
         if (status) {
             message.success("GET data successfull!");
-            const dataObj=data.map((data,index)=>{
+            const dataObj = data.map((data, index) => {
                 return {
-                    index:index,
+                    index: index,
                     data
                 }
             })
             this.setState({
                 dataTable: dataObj
             })
-        }else {message.error("GET data Error!!!")}
+        } else {
+            message.error("GET data Error!!!")
+        }
     }
 
     render() {
@@ -41,27 +43,27 @@ class EqualMpopByGwIpv4 extends React.Component {
             {
                 title: 'Ingress Device',
                 key: 'name',
-                render:record=>{
+                render: record => {
                     return record.data.name
                 }
             },
             {
                 title: 'IPLC-Interface',
                 key: 'iplcinterface',
-                render:record=>{
+                render: record => {
                     return record.data.interfaceName
                 }
             },
             {
                 title: 'IP next-hop',
                 key: 'ip-next-hop',
-                render:record=>{
-                    return(
-                        <ul style={{listStyle:"none"}}>
-                            {record.data.listIpv4.map((item,index)=>{
-                                return(
+                render: record => {
+                    return (
+                        <ul style={{listStyle: "none"}}>
+                            {record.data.listIpv4.map((item, index) => {
+                                return (
                                     <li key={index}>
-                                        { item.ipNextHop}
+                                        {item.ipNextHop}
                                     </li>
                                 )
                             })}
@@ -73,13 +75,13 @@ class EqualMpopByGwIpv4 extends React.Component {
             {
                 title: 'MP/CGNAT',
                 key: 'mp-cnat',
-                render:record=>{
-                    return(
-                        <ul style={{listStyle:"none"}}>
-                            {record.data.listIpv4.map((item,index)=>{
-                                return(
+                render: record => {
+                    return (
+                        <ul style={{listStyle: "none"}}>
+                            {record.data.listIpv4.map((item, index) => {
+                                return (
                                     <li key={index}>
-                                        { item.nameNextHop}
+                                        {item.nameNextHop}
                                     </li>
                                 )
                             })}
@@ -92,13 +94,13 @@ class EqualMpopByGwIpv4 extends React.Component {
             {
                 title: 'Detail',
                 key: 'detail',
-                render:record=>{
-                    return(
-                        <ul style={{listStyle:"none"}}>
-                            {record.data.listIpv4.map((item,index)=>{
-                                return(
+                render: record => {
+                    return (
+                        <ul style={{listStyle: "none"}}>
+                            {record.data.listIpv4.map((item, index) => {
+                                return (
                                     <li key={index}>
-                                        <b>Ipv6: </b> { item.ipv6} <b> - Traffic: </b> { item.traffic }<br/>
+                                        <b>Ipv6: </b> {item.ipv6} <b> - Traffic: </b> {item.traffic}<br/>
                                     </li>
                                 )
                             })}
@@ -110,22 +112,21 @@ class EqualMpopByGwIpv4 extends React.Component {
             },
 
 
-
             {
                 title: 'MP/CGNAT-Rate(G)',
                 key: 'mp-cgnat-rate',
-                render:record=>{
-                    let rate =Math.round(record.data.trafficKentik/1024, 2)
+                render: record => {
+                    let rate = Math.round(record.data.trafficKentik / 1024, 2)
                     return rate
                 }
 
 
             },
         ];
-        const {dataTable}=this.state;
+        const {dataTable} = this.state;
         return (
             <EqualMpopByGwIpv4Wrapper>
-                <Card style={{marginBottom:10}}>
+                <Card style={{marginBottom: 10}}>
                     <h2>
                         Equal MPOP by GW
                     </h2>

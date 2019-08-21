@@ -1,6 +1,7 @@
 import React from "react";
-import { DatePicker, InputNumber,Input ,Button, Card, message,Row, Col} from 'antd';
-const InputGroup=Input.Group;
+import {DatePicker, InputNumber, Input, Button, Card, message, Row, Col} from 'antd';
+
+const InputGroup = Input.Group;
 import axios from "axios";
 import ReactEcharts from 'echarts-for-react';
 import moment from "moment";
@@ -67,8 +68,7 @@ class GraphSummary extends React.Component {
                 objRed += item.percentRedIn;
                 objOrange += item.percentOrangeIn;
                 objGreen += item.percentGreenIn;
-            }
-            else {
+            } else {
                 listTime.push(timeCheck);
                 listRed.push(objRed / countInDay);
                 listOrange.push(objOrange / countInDay);
@@ -169,8 +169,7 @@ class GraphSummary extends React.Component {
         };
         if (this.props.dataSummaryGraph.length === 0) {
             return null;
-        }
-        else {
+        } else {
             return (
                 <ReactEcharts fluid
                               option={this.getOption(this.props.dataSummaryGraph)}
@@ -179,7 +178,7 @@ class GraphSummary extends React.Component {
                     // theme={"dark"}
                               onChartReady={this.onChartReadyCallback}
                               onEvents={onEvents}/>
-           );
+            );
         }
 
     }
@@ -196,16 +195,14 @@ class Summary extends React.Component {
             endOpen: false,
             valueLess: 75,
             valueMore: 90,
-            dataSummaryGraphPeering:[],
-            dataSummaryGraphTransit:[]
+            dataSummaryGraphPeering: [],
+            dataSummaryGraphTransit: []
         }
     }
 
 
-
-
-disabledStartDate = startValue => {
-        const { endValue } = this.state;
+    disabledStartDate = startValue => {
+        const {endValue} = this.state;
         if (!startValue || !endValue) {
             return false;
         }
@@ -213,7 +210,7 @@ disabledStartDate = startValue => {
     };
 
     disabledEndDate = endValue => {
-        const { startValue } = this.state;
+        const {startValue} = this.state;
         if (!endValue || !startValue) {
             return false;
         }
@@ -236,76 +233,76 @@ disabledStartDate = startValue => {
 
     handleStartOpenChange = open => {
         if (!open) {
-            this.setState({ endOpen: true });
+            this.setState({endOpen: true});
         }
     };
 
     handleEndOpenChange = open => {
-        this.setState({ endOpen: open });
+        this.setState({endOpen: open});
     };
-   // onChange Number
+    // onChange Number
 
 
-    onChangeLess=(value)=>{
-     this.setState({
-         valueLess:value
-     })
+    onChangeLess = (value) => {
+        this.setState({
+            valueLess: value
+        })
     }
-    onChangeMore=(value)=>{
-      this.setState({
-          valueMore:value
-      })
+    onChangeMore = (value) => {
+        this.setState({
+            valueMore: value
+        })
     }
     // Ve bieu do
-    handleDraw=()=>{
-        const { startValue, endValue, valueLess,valueMore } = this.state;
-        if(startValue&&endValue){
-            const startDate=startValue._d.toISOString();
-            const dateStartConvert=moment(startDate).format("YYYY-MM-DD");
-            const endDate=endValue._d.toISOString();
-            const dateEndConvert=moment(endDate).format("YYYY-MM-DD");
+    handleDraw = () => {
+        const {startValue, endValue, valueLess, valueMore} = this.state;
+        if (startValue && endValue) {
+            const startDate = startValue._d.toISOString();
+            const dateStartConvert = moment(startDate).format("YYYY-MM-DD");
+            const endDate = endValue._d.toISOString();
+            const dateEndConvert = moment(endDate).format("YYYY-MM-DD");
             axios({
                 method: "GET",
                 url: `https://netd.ast.fpt.net/netd-api/api/get-log-summary-irb-for-graph?from=${dateStartConvert}&to=${dateEndConvert}&okSize=${valueLess}&criticalSize=${valueMore}`
-            }).then(res=>{
+            }).then(res => {
                 console.log(typeof res.data.status)
-                if(res.data.status===200){
+                if (res.data.status === 200) {
                     message.success("Get data successfully!!");
-                    const dataDraw=res.data.data;
-                    const dataSummaryGraphPeering=[];
-                    const dataSummaryGraphTransit=[];
-                    dataDraw.map((data)=>{
-                        if(data.type=="peering"){
+                    const dataDraw = res.data.data;
+                    const dataSummaryGraphPeering = [];
+                    const dataSummaryGraphTransit = [];
+                    dataDraw.map((data) => {
+                        if (data.type == "peering") {
                             dataSummaryGraphPeering.push(data)
-                        }else{
+                        } else {
                             dataSummaryGraphTransit.push(data)
                         }
                     })
                     this.setState({
-                        dataSummaryGraphPeering:dataSummaryGraphPeering,
-                        dataSummaryGraphTransit:dataSummaryGraphTransit
+                        dataSummaryGraphPeering: dataSummaryGraphPeering,
+                        dataSummaryGraphTransit: dataSummaryGraphTransit
 
                     })
                 }
             })
-        }else if(res.data.status===500){
+        } else if (res.data.status === 500) {
             console.log("a")
             message.info("Empty data!!")
-        }else{
+        } else {
             message.error("Get data error!!!")
         }
     }
 
     render() {
-        const { startValue, endValue, endOpen,dataSummaryGraphPeering,dataSummaryGraphTransit } = this.state;
+        const {startValue, endValue, endOpen, dataSummaryGraphPeering, dataSummaryGraphTransit} = this.state;
         return (
             <div>
-                <Card className="selection_date" style={{ marginBottom:20}}>
-                    <h2 style={{fontWeight:"640"}}>IRB</h2>
-                    <div className="from_date" style={{ float:"left", width:200}}>
-                        <h4 style={{fontWeight:"560"}}>From</h4>
+                <Card className="selection_date" style={{marginBottom: 20}}>
+                    <h2 style={{fontWeight: "640"}}>IRB</h2>
+                    <div className="from_date" style={{float: "left", width: 200}}>
+                        <h4 style={{fontWeight: "560"}}>From</h4>
                         <DatePicker
-                            style={{marginRight:20,width:180}}
+                            style={{marginRight: 20, width: 180}}
                             disabledDate={this.disabledStartDate}
                             format="DD/MM/YYYY"
                             value={startValue}
@@ -314,10 +311,10 @@ disabledStartDate = startValue => {
                             onOpenChange={this.handleStartOpenChange}
                         />
                     </div>
-                    <div className="to_date" style={{ float:"left",width:200}}>
-                        <h4 style={{fontWeight:"560"}}>To</h4>
+                    <div className="to_date" style={{float: "left", width: 200}}>
+                        <h4 style={{fontWeight: "560"}}>To</h4>
                         <DatePicker
-                            style={{marginRight:20,width:180}}
+                            style={{marginRight: 20, width: 180}}
                             disabledDate={this.disabledEndDate}
                             format="DD/MM/YYYY"
                             // defaultValue={moment().today()}
@@ -328,51 +325,58 @@ disabledStartDate = startValue => {
                             onOpenChange={this.handleEndOpenChange}
                         />
                     </div>
-                        <div className="input-number" style={{ float:"left", marginRight:10, width:200}}>
-                            <h4 style={{color:"green"}}>OK(less than)</h4>
-                            <InputNumber style={{  width:180}} min={0} max={98} defaultValue={75} onChange={this.onChangeLess} />
-                        </div>
-                        <div  className="input-number" style={{ float:"left", marginRight:10, width:200}}>
-                            <h4 style={{color:"orange"}}>WARNING (beetween)</h4>
-                            <InputGroup compact>
-                                <Input
-                                    style={{ width: 75, textAlign: 'center' }}
-                                    value={this.state.valueLess}
-                                />
-                                <Input
-                                    style={{
-                                        width: 30,
-                                        borderLeft: 0,
-                                        pointerEvents: 'none',
-                                        backgroundColor: '#fff',
-                                    }}
-                                    placeholder="-"
-                                    disabled
-                                />
-                                <Input
-                                    style={{ width: 75, textAlign: 'center', borderLeft: 0 }}
-                                    value={this.state.valueMore}
-                                />
-                            </InputGroup>
-                        </div>
-                       <div  className="input-number" style={{ float:"left", marginRight:10, width:200}}>
-                           <h4 style={{color:"red"}}>CRITICAL (more than)</h4>
-                           <InputNumber
-                               style={{ width:180}}
-                               min={1} max={99}
-                               defaultValue={90}
-                               onChange={this.onChangeMore} /></div>
+                    <div className="input-number" style={{float: "left", marginRight: 10, width: 200}}>
+                        <h4 style={{color: "green"}}>OK(less than)</h4>
+                        <InputNumber style={{width: 180}} min={0} max={98} defaultValue={75}
+                                     onChange={this.onChangeLess}/>
+                    </div>
+                    <div className="input-number" style={{float: "left", marginRight: 10, width: 200}}>
+                        <h4 style={{color: "orange"}}>WARNING (beetween)</h4>
+                        <InputGroup compact>
+                            <Input
+                                style={{width: 75, textAlign: 'center'}}
+                                value={this.state.valueLess}
+                            />
+                            <Input
+                                style={{
+                                    width: 30,
+                                    borderLeft: 0,
+                                    pointerEvents: 'none',
+                                    backgroundColor: '#fff',
+                                }}
+                                placeholder="-"
+                                disabled
+                            />
+                            <Input
+                                style={{width: 75, textAlign: 'center', borderLeft: 0}}
+                                value={this.state.valueMore}
+                            />
+                        </InputGroup>
+                    </div>
+                    <div className="input-number" style={{float: "left", marginRight: 10, width: 200}}>
+                        <h4 style={{color: "red"}}>CRITICAL (more than)</h4>
+                        <InputNumber
+                            style={{width: 180}}
+                            min={1} max={99}
+                            defaultValue={90}
+                            onChange={this.onChangeMore}/></div>
 
                     <div>
                         <Button
-                            style={{backgroundColor:"green", color:"white", fontWeight:700, marginTop:27,width:150}}
+                            style={{
+                                backgroundColor: "green",
+                                color: "white",
+                                fontWeight: 700,
+                                marginTop: 27,
+                                width: 150
+                            }}
                             onClick={this.handleDraw}
                         > Draw </Button>
                     </div>
 
                 </Card>
-                <div style={{marginTop:20}}>
-                    <Card width={8}  >
+                <div style={{marginTop: 20}}>
+                    <Card width={8}>
                         <Row>
                             <Col span={12}><GraphSummary
                                 dataSummaryGraph={dataSummaryGraphPeering}
@@ -385,7 +389,7 @@ disabledStartDate = startValue => {
                     </Card>
                 </div>
 
-                </div>
+            </div>
         )
     }
 }

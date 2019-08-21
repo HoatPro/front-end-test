@@ -1,12 +1,11 @@
 import React from "react";
-import { ShowWrapper } from "./Show.style";
+import {ShowWrapper} from "./Show.style";
 import axios from "axios";
-import {message,Select,Input,Card} from "antd";
+import {message, Select, Input, Card} from "antd";
 import TableMP from './TableMP';
 
 
-
-const { Option } = Select;
+const {Option} = Select;
 const customPanelStyle = {
     background: '#f7f7f7',
     borderRadius: 4,
@@ -14,17 +13,19 @@ const customPanelStyle = {
     border: 0,
     overflow: 'hidden',
 };
+
 class Show extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
-         dataSelect:[],
-            nameSelected:[],
+        this.state = {
+            dataSelect: [],
+            nameSelected: [],
 
 
         }
     }
-    async componentDidMount(){
+
+    async componentDidMount() {
 
         const options = {
             method: "GET",
@@ -34,75 +35,73 @@ class Show extends React.Component {
             status,
             data: {data}
         } = await axios(options);
-        if(status){
+        if (status) {
             message.success("GET group MP topo successfully!")
-            const dataObj=data.listName.map((dt,index)=>{
+            const dataObj = data.listName.map((dt, index) => {
                 return {
-                    "index":index,
+                    "index": index,
                     dt
                 }
             })
             this.setState({
-                dataSelect:dataObj,
+                dataSelect: dataObj,
 
             })
-        }else{
+        } else {
             message.error("GET data error!!!")
         }
     }
 
-    onChange=(value)=> {
-      const {dataSelect}=this.state;
-        const nameOb=[];
-       dataSelect.map(dt=>{
-          if(value==dt.index){
-              nameOb.push(dt.dt)
-          }else return  null;
-      });
+    onChange = (value) => {
+        const {dataSelect} = this.state;
+        const nameOb = [];
+        dataSelect.map(dt => {
+            if (value == dt.index) {
+                nameOb.push(dt.dt)
+            } else return null;
+        });
 
-      this.setState({
-          nameSelected:nameOb
-      })
+        this.setState({
+            nameSelected: nameOb
+        })
     }
 
 
-
-
-
-render() {
+    render() {
 
 
         const children = [];
-        this.state.dataSelect.map(dt=>{
-          children.push(<Option key={dt.index}>{dt.dt}-MP-*</Option>);
-      })
-        const {nameSelected}=this.state;
+        this.state.dataSelect.map(dt => {
+            children.push(<Option key={dt.index}>{dt.dt}-MP-*</Option>);
+        })
+        const {nameSelected} = this.state;
 
         return (
             <ShowWrapper>
-                       <Card style={{width:"100%", marginBottom:10}}>
-                           <h4> Search by name</h4>
-                        <Select
-                            showSearch
-                            style={{ width: 200,marginBottom:20 }}
-                            placeholder="name"
-                            optionFilterProp="children"
-                            onChange={this.onChange}
-                            // onSearch={onSearch}
-                            filterOption={(input, option) =>
-                                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                            }
-                        >
-                            {children}
-                        </Select>
-                       </Card>
+                <Card style={{width: "100%", marginBottom: 10}}>
+                    <h4> Search by name</h4>
+                    <Select
+                        showSearch
+                        style={{width: 200, marginBottom: 20}}
+                        placeholder="name"
+                        optionFilterProp="children"
+                        onChange={this.onChange}
+                        // onSearch={onSearch}
+                        filterOption={(input, option) =>
+                            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                        }
+                    >
+                        {children}
+                    </Select>
+                </Card>
                 <Card>
-                        <TableMP
-                            nameMp={nameSelected}
-                        />
-                       </Card>
+                    <TableMP
+                        nameMp={nameSelected}
+                    />
+                </Card>
             </ShowWrapper>
         );
     }
 }
+
 export default Show;

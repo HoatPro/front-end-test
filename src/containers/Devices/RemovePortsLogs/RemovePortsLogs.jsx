@@ -1,30 +1,33 @@
 import React from "react";
-import {Card,Tabs,Table,message,Icon,DatePicker, Select,Alert,Modal,Button} from 'antd';
+import {Card, Tabs, Table, message, Icon, DatePicker, Select, Alert, Modal, Button} from 'antd';
 import {RemovePortsLogsWrapper} from "./RemovePortsLogs.style"
 import axios from "axios";
 import Search from "antd/lib/input/Search";
 import TableFail from "./TableFail"
 import moment from "moment";
 import TableDetail from "../RemovePortsLogs/TableDetail";
+
 const dateFormat = 'DD-MM-YYYY';
-const { TabPane } = Tabs;
+const {TabPane} = Tabs;
+
 class RemovePortsLogs extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
-            dataTable:[],
-            totalPortCnt:null,
-            totalSuccessPortCnt:null,
-            totalSuccessPortPercent:null,
-            dataGet:[],
-            dataLogs:[],
-            visible:false,
+        this.state = {
+            dataTable: [],
+            totalPortCnt: null,
+            totalSuccessPortCnt: null,
+            totalSuccessPortPercent: null,
+            dataGet: [],
+            dataLogs: [],
+            visible: false,
 
         }
     }
+
     async componentDidMount() {
-        let today     = moment(new Date());
-        const date=today._d.toISOString();
+        let today = moment(new Date());
+        const date = today._d.toISOString();
         const options = {
             method: "GET",
             url: `https://netd.ast.fpt.net/netd-api/api/remove-ports-from-opsview-logs?date=${date}`
@@ -43,7 +46,7 @@ class RemovePortsLogs extends React.Component {
                 return s;
             }, 0)), 0);
             const totalSuccessPortPercent = Math.round(totalSuccessPortCnt / totalPortCnt * 100 * 100) / 100;
-            const dataObj=data.map((data,index)=>{
+            const dataObj = data.map((data, index) => {
                 let successPortCnt = data.ports.reduce((s, data) => {
                     if (data.requestOpsviewResult != null && data.requestOpsviewResult.success) {
                         return s + 1;
@@ -53,22 +56,24 @@ class RemovePortsLogs extends React.Component {
 
                 let successPercent = Math.round(successPortCnt / data.ports.length * 100 * 100) / 100;
                 return {
-                    index:index+1,
+                    index: index + 1,
                     data,
                     successPortCnt,
                     successPercent,
-                    length:data.ports.length
+                    length: data.ports.length
                 }
             })
             this.setState({
                 dataTable: dataObj,
-                totalPortCnt:totalPortCnt,
-                totalSuccessPortCnt:totalSuccessPortCnt,
-                totalSuccessPortPercent:totalSuccessPortPercent,
-                dataGet:data
+                totalPortCnt: totalPortCnt,
+                totalSuccessPortCnt: totalSuccessPortCnt,
+                totalSuccessPortPercent: totalSuccessPortPercent,
+                dataGet: data
 
             })
-        }else {message.error("GET data Error!!!")}
+        } else {
+            message.error("GET data Error!!!")
+        }
     }
 
     // formatDate=(date)=> {
@@ -106,69 +111,69 @@ class RemovePortsLogs extends React.Component {
     //
     // }
 
-    handleClick=(index)=>{
-        const {dataTable}=this.state;
-        const dataLogs=[];
-        dataTable.filter(data=>{
-            if(data.index==index){
+    handleClick = (index) => {
+        const {dataTable} = this.state;
+        const dataLogs = [];
+        dataTable.filter(data => {
+            if (data.index == index) {
                 dataLogs.push(data)
             }
         })
         this.setState({
-            visiable:true,
-            dataLogs:dataLogs
+            visiable: true,
+            dataLogs: dataLogs
         })
     }
-    setVisible=(visiable)=>{
+    setVisible = (visiable) => {
         this.setState({
-            visiable:visiable
+            visiable: visiable
         })
     }
 
     render() {
-        const{dataGet,dataTable,totalPortCnt,totalSuccessPortCnt,totalSuccessPortPercent,dataLogs,visiable}=this.state;
+        const {dataGet, dataTable, totalPortCnt, totalSuccessPortCnt, totalSuccessPortPercent, dataLogs, visiable} = this.state;
         console.log(dataLogs)
         const columns = [
             {
                 title: 'Index',
                 key: 'index',
-                render:record=>{
+                render: record => {
                     return record.index
                 }
             },
             {
                 title: 'Times',
                 key: 'time',
-                render:record=>{
-                    const times=record.data.time
-                    return  moment(times).format("YYYY-MM-DD HH:mm:ss")
+                render: record => {
+                    const times = record.data.time
+                    return moment(times).format("YYYY-MM-DD HH:mm:ss")
                 }
             },
             {
                 title: 'Name',
                 key: 'name',
-                render:record=>{
+                render: record => {
                     return record.data.name
                 }
             },
             {
                 title: 'Ip',
                 key: 'ip',
-                render:record=>{
+                render: record => {
                     return record.data.ip
                 }
             },
             {
                 title: 'Function',
                 key: 'function',
-                render:record=> {
+                render: record => {
                     return record.data.function
                 }
             },
             {
                 title: 'Method',
                 key: 'methods',
-                render:record=>{
+                render: record => {
                     return record.data.method
                 }
             },
@@ -180,8 +185,8 @@ class RemovePortsLogs extends React.Component {
                         return <div
                             style={{color: "red"}}>{record.successPortCnt + '/' + record.length + '(' + record.successPercent + '%)'}</div>
                     }
-                        return <div
-                            style={{color: "green"}}>{record.successPortCnt + '/' + record.length + '(' + record.successPercent + '%)'}</div>
+                    return <div
+                        style={{color: "green"}}>{record.successPortCnt + '/' + record.length + '(' + record.successPercent + '%)'}</div>
 
 
                 }
@@ -189,12 +194,20 @@ class RemovePortsLogs extends React.Component {
             {
                 title: 'Action',
                 key: 'action',
-                render:record=>{
-                    return(<div >
+                render: record => {
+                    return (<div>
                         <Icon
                             type="eye"
-                            style={{ width:26, height:26,backgroundColor:"#00b5ad",padding:5,color:"white",fontWeight:700,borderRadius:5}}
-                            onClick={()=>this.handleClick(record.index)}
+                            style={{
+                                width: 26,
+                                height: 26,
+                                backgroundColor: "#00b5ad",
+                                padding: 5,
+                                color: "white",
+                                fontWeight: 700,
+                                borderRadius: 5
+                            }}
+                            onClick={() => this.handleClick(record.index)}
                         />
                         <Modal
                             width={1200}
@@ -206,7 +219,7 @@ class RemovePortsLogs extends React.Component {
                                 <Button key={1} type="danger" onClick={() => this.setVisible(false)}>Close</Button>
                             ]}
                         >
-                            <TableDetail data={dataLogs} />
+                            <TableDetail data={dataLogs}/>
                         </Modal>
                     </div>)
                 }
@@ -216,26 +229,26 @@ class RemovePortsLogs extends React.Component {
         return (
 
             <RemovePortsLogsWrapper>
-                <Card  style={{ width: "100%",fontWeight:600, marginBottom:15 }}>
-                    <h2 style={{fontWeight:700}}>Logs</h2>
+                <Card style={{width: "100%", fontWeight: 600, marginBottom: 15}}>
+                    <h2 style={{fontWeight: 700}}>Logs</h2>
 
-                    <div style={{width:1200, marginBottom:100}}>
-                        <div style={{width:200, float:"left"}} >
+                    <div style={{width: 1200, marginBottom: 100}}>
+                        <div style={{width: 200, float: "left"}}>
                             <h4>Choose log date</h4>
                             <DatePicker
                                 onChange={this.onChange}
                                 format={dateFormat}
                             />
                         </div>
-                        <div  style={{width:200, float:"left"}}>
-                            <h4 > Search by name...</h4>
-                            <Search style={{width:180}} placeholder="Search by name..."/>
+                        <div style={{width: 200, float: "left"}}>
+                            <h4> Search by name...</h4>
+                            <Search style={{width: 180}} placeholder="Search by name..."/>
                         </div>
 
-                        <div style={{ width:200 ,float:"left"}}>
+                        <div style={{width: 200, float: "left"}}>
                             <h4> Search by time</h4>
                             <Select
-                                style={{ width:180 }}
+                                style={{width: 180}}
                                 defaultValue={"all"}
                                 onChange={this.handleChange}
                             >
@@ -245,20 +258,22 @@ class RemovePortsLogs extends React.Component {
 
                     </div>
 
-                    <Tabs  type="card">
+                    <Tabs type="card">
                         <TabPane tab="Overview" key="1">
-                            <Alert style={{fontWeight:650,textAlign:"center"}} message={`${totalSuccessPortCnt}/${totalPortCnt}(${totalSuccessPortPercent}%)`} type="info" />
-                        <Table
-                            style={{fontWeight:500,marginTop:10}}
-                            columns={columns}
-                            dataSource={dataTable}
-                            bordered
-                            rowKey={record=>record.index}
-                        />
+                            <Alert style={{fontWeight: 650, textAlign: "center"}}
+                                   message={`${totalSuccessPortCnt}/${totalPortCnt}(${totalSuccessPortPercent}%)`}
+                                   type="info"/>
+                            <Table
+                                style={{fontWeight: 500, marginTop: 10}}
+                                columns={columns}
+                                dataSource={dataTable}
+                                bordered
+                                rowKey={record => record.index}
+                            />
 
                         </TabPane>
                         <TabPane tab="Fail list" key="2">
-                            <TableFail  dataGet={dataGet}/>
+                            <TableFail dataGet={dataGet}/>
                         </TabPane>
 
                     </Tabs>

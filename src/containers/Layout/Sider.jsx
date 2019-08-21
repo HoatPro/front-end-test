@@ -1,7 +1,7 @@
 import React from 'react';
 import {Menu, Icon} from 'antd';
 import {SiderWrapper} from './Layout.style';
-import {Link} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 
 const {SubMenu} = Menu;
 
@@ -281,8 +281,8 @@ class Sider extends React.Component {
                     </SubMenu>
                 </Menu>
                 < /SiderWrapper>
-                    );
+                    )
                     }
                     }
 
-                    export default Sider;
+export default withRouter(Sider);

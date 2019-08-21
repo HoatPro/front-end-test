@@ -1,8 +1,10 @@
 import React from "react";
 import Summary from "./Summary";
-import {Tabs} from  'antd';
+import {Tabs} from 'antd';
 import Detail from "./Detail";
-const { TabPane } = Tabs;
+
+const {TabPane} = Tabs;
+
 class GraphFlowHistory extends React.Component {
 
     render() {
@@ -12,7 +14,7 @@ class GraphFlowHistory extends React.Component {
                     <Summary/>
                 </TabPane>
                 <TabPane tab="Detail" key="2">
-                  <Detail/>
+                    <Detail/>
                 </TabPane>
 
             </Tabs>
@@ -20,4 +22,4 @@ class GraphFlowHistory extends React.Component {
     }
 }
 
-export default  GraphFlowHistory;
+export default GraphFlowHistory;

@@ -1,46 +1,65 @@
 import React from "react";
 import axios from "axios";
-import {message, DatePicker, Select, Card, Table, Form, Modal, Input} from "antd";
+import {message, DatePicker, Select, Card, Table, Col, Row, Modal, Icon, Button,Input} from "antd";
 import {IRBDetailWrapper} from "./IRBDetail.style"
-import Search from "antd/lib/input/Search";
+import moment from "moment";
 
-
-const dateFormat = 'DD-MM-YYYY';
-const { Option } = Select;
+const dateFormat = 'DD/MM/YYYY';
+const {Option} = Select;
+const {Search}=Input
 class IRBDetail extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
-            listTime:[],
-            dataSelected:[],
-            dataTable:[]
+        this.state = {
+            listTime: [],
+            dataSelected: [],
+            dataTable: [],
+            dataDetail:[],
+            visible: false
+
         }
     }
 
-    formatDate=(date)=> {
-    var d = new Date(date),
-    month = '' + (d.getMonth() + 1),
-    day = '' + d.getDate(),
-    year = d.getFullYear();
+    async componentDidMount(): void {
+        let today = moment(new Date());
+        const todaySelected = today._d.toISOString();
+        const dateConvert = moment(todaySelected).format("YYYY-MM-DD");
+        const options = {
+            method: "GET",
+            url: `https://netd.ast.fpt.net/netd-api/api/get-all-time-in-day?date=${dateConvert}`
+        };
+        const {
+            status,
+            data: {data}
+        } = await axios(options);
+        if (status) {
+            const dataObj = data.map((dt, index) => {
+                return {
+                    "index": index + 1,
+                    dt
+                }
+            })
+            message.success("GET data successfully");
+            this.setState({
+                listTime: dataObj
+            })
+        }
 
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
 
-    return [year, month, day].join('-');
+    }
 
-}
-
-    onChange=(dateString)=> {
-        var myDate = new Date(dateString._d);
-        const dateSelected = this.formatDate(myDate);
+    onChange = (dateString) => {
+        const myDate = new Date(dateString._d);
+        const dateSelected = myDate.toISOString();
         axios({
             method: "GET",
             url: `https://netd.ast.fpt.net/netd-api/api/get-all-time-in-day?date=${dateSelected}`
         }).then(res => {
             if (res.status) {
-                const dataObj=res.data.data.map((dt,index)=>{
+                const dataObj = res.data.data.map((dt, index) => {
                     return {
-                        "index":index,dt
+                        "index": index + 1,
+                        dt
                     }
                 })
                 message.success("GET data successfully");
@@ -52,142 +71,385 @@ class IRBDetail extends React.Component {
 
     }
 
- handleChange=(value)=> {
-   const {listTime}=this.state;
-   const timeSelected=[]
-   listTime.map((dt,index)=>{
-       if(value==dt.index){
-           timeSelected.push(dt.dt)
-       }else return  null;
-   });
-     axios({
-         method: "GET",
-         url: `https://netd.ast.fpt.net/netd-api/api/get-detail-info-irb?time=${timeSelected}`
-     }).then(res=>{
-         if(res.status){
-             message.success('GET detail Group MP successfully!');
-           const dataNew=res.data.data[0].data;
-           const dataTable=[];
-            dataNew.map((dt,index)=>{
-                 if(dt.bgpV4!=null&&dt.bgpV6!=null) {
-                     dataTable.push(
-                         {
-                             index:index,
-                             dt
-                         }
-                     )
-                 }
-             })
-             this.setState({
-                 dataTable:dataTable
-             })
-         }
-     })
-
-}
-
-render() {
-
-    const children = [];
-    this.state.listTime.map((list,index)=>{
-        children.push(<Option key={index}>{list.dt.toString()}</Option>);
-    });
-    const {dataTable}=this.state;
-    const columns = [
-        {
-            title: 'Irb',
-            key: 'name',
-            render:record=>{
-                 return record.dt.irbName
+    handleChange = (value) => {
+        const {listTime} = this.state;
+        const timeSelected = []
+        listTime.map((dt, index) => {
+            if (value == dt.index) {
+                timeSelected.push(dt.dt)
+            } else return null;
+        });
+        axios({
+            method: "GET",
+            url: `https://netd.ast.fpt.net/netd-api/api/get-detail-info-irb?time=${timeSelected}`
+        }).then(res => {
+            if (res.status) {
+                message.success('GET detail Group MP successfully!');
+                const dataNew = res.data.data[0].data;
+                const dataTable = [];
+                dataNew.map((dt, index) => {
+                    if (dt.bgpV4 != null && dt.bgpV6 != null) {
+                        dataTable.push(
+                            {
+                                index: index,
+                                dt
+                            }
+                        )
+                    }
+                })
+                this.setState({
+                    dataTable: dataTable
+                })
             }
-        },
-        {
-            title: 'Name',
-            key: 'ip',
-            render: record => {
-                return record.dt.irbDetail
-            }
-        },
-        {
-            title: 'Gateway',
-            key: 'gateway',
-            render: record => {
-                return record.dt.hostName
-            }
+        })
 
-        },
-        {
-            title: 'BGP v4',
-            key: 'bgpv4',
-            render: record => {
-                if(record.dt.bgpV4===null){
-                    return null
+    }
+
+    //Deatail
+
+    handleClick = (index) => {
+        const {dataTable} = this.state;
+
+        const dataDetail = [];
+        dataTable.map(data => {
+            if (data.index == index) {
+                dataDetail.push(data)
+            } else {
+                return null
+            }
+        });
+        console.log(dataDetail);
+        this.setState({
+            visible: true,
+            dataDetail:dataDetail
+        });
+
+    }
+
+    handleCancel = (e) => {
+        console.log(e);
+        this.setState({
+            visible: false,
+        });
+    }
+
+    render() {
+        const {listTime,dataDetail} = this.state;
+        const children = [];
+        listTime.map((list, index) => {
+            children.push(<Option
+                key={index + 1}>{moment(`${list.dt}`).utcOffset("+00:00").format("DD/MM/YYYY HH:mm:ss")}</Option>);
+        });
+        const {dataTable} = this.state;
+        const columns = [
+            {
+                title: 'Irb',
+                key: 'name',
+                render: record => {
+                    return record.dt.irbName
                 }
-                return record.dt.bgpV4.export.replace("-Export", "")
-            }
-        },
-        {
-            title: 'BGP v6',
-            key: 'bgpv6',
-            render: record => {
-                if(record.dt.bgpV6===null){
-                    return null
+            },
+            {
+                title: 'Name',
+                key: 'ip',
+                render: record => {
+                    return record.dt.irbDetail
                 }
-                return record.dt.bgpV6.export.replace("-Export", "")
+            },
+            {
+                title: 'Gateway',
+                key: 'gateway',
+                render: record => {
+                    return record.dt.hostName
+                }
+
+            },
+            {
+                title: 'BGP v4',
+                key: 'bgpv4',
+                render: record => {
+                    if (record.dt.bgpV4 === null) {
+                        return null
+                    }
+                    return record.dt.bgpV4.export.replace("-Export", "")
+                }
+            },
+            {
+                title: 'BGP v6',
+                key: 'bgpv6',
+                render: record => {
+                    if (record.dt.bgpV6 === null) {
+                        return null
+                    }
+                    return record.dt.bgpV6.export.replace("-Export", "")
+                }
+            },
+            {
+                title: 'Traffic in',
+                key: 'traffic-in',
+                render: record => {
+                    return <div> {record.dt.totalTrafficIn} Mb ({record.dt.percentTrafficIn.toFixed(2)}%){" "}</div>
+                }
+            },
+            {
+                title: 'Traffic out',
+                key: 'traffic-out',
+                render: record => {
+                    return <div>{record.dt.totalTrafficOut} Mb ({record.dt.percentTrafficOut.toFixed(2)}%){" "}</div>
+                }
+            },
+            {
+                title: 'Action',
+                key: 'action',
+                render: record => {
+                    return <Icon
+                        type="eye"
+                        style={{
+                            width: 26,
+                            height: 26,
+                            backgroundColor: "#00b5ad",
+                            padding: 5,
+                            color: "white",
+                            fontWeight: 700,
+                            borderRadius: 5,
+                            alignItems: "center"
+                        }}
+                        onClick={() => this.handleClick(record.index)}
+                    />
+                }
             }
-        },
-        {
-            title: 'Traffic in',
-            key: 'traffic-in',
-            render:record=>{
-                return <div>{record.dt.totalTrafficIn} Mb ({record.dt.percentTrafficIn}%)</div>
+        ]
+        const newData={}
+        dataDetail.map(data=>{
+            return {
+                name:data.dt.irbName,
+                hostName:data.dt.hostName,
+                region:data.dt.region,
+                irbDetail:data.dt.irbDetail,
+                type:data.dt.type,
+                description:data.dt.description,
             }
-        },
-        {
-            title: 'Traffic out',
-            key: 'traffic-out',
-            render:record=>{
-                return <div>{record.dt.totalTrafficOut} Mb ({record.dt.percentTrafficOut}%)</div>
-            }
-        },
-    ]
+        })
+        console.log(newData)
         return (
             <IRBDetailWrapper className="page-center">
-                <Card style={{width:"100%"}}>
-                    <div className="irb-detail" style={{width:"100%",marginBottom:20}}>
-                        <div style={{width:200, marginRight:60, float:"left"}} >
-                            <h4 > Search by name...</h4>
-                            <Search  placeholder="Search by name..."/>
-                        </div>
-                        <div style={{width:200, float:"left"}} >
+                <Card style={{width: "100%"}}>
+                    <Row className="irb-detail" style={{marginBottom: 20}}>
+                        <Col style={{width: 200, marginRight: 25}} span={8}>
+                            <h4> Search by name...</h4>
+                            <Search placeholder="Search by name..."/>
+                        </Col>
+                        <Col style={{width: 200}} span={8}>
                             <h4>Choose log date</h4>
                             <DatePicker
                                 onChange={this.onChange}
+                                defaultValue={moment().subtract(0, 'days')}
                                 format={dateFormat}
                             />
-                        </div>
-                        <div style={{width:200, float:"right", marginRight:800}}>
+                        </Col>
+                        <Col style={{width: 200}} span={8}>
                             <h4> Search by time</h4>
                             <Select
-                                style={{ width: '100%' }}
+                                style={{width: '100%'}}
                                 defaultValue={"all"}
                                 onChange={this.handleChange}
                             >
                                 {children}
                             </Select>
-                        </div>
-                    </div>
+                        </Col>
+                    </Row>
                 </Card>
-                     <Card >
-                         <Table
-                             columns={columns}
-                             dataSource={dataTable}
-                             bordered
-                             rowKey={record=>record.index}
-                         />
+                <Card>
+                    <Table
+                        columns={columns}
+                        dataSource={dataTable}
+                        bordered
+                        rowKey={record => record.index}
+                    />
+                </Card>
+
+                <Modal
+                    width={1600}
+                    title="IRB Detail"
+                    visible={this.state.visible}
+                    closable={false}
+                    footer={[
+                        <div>
+                            <Button type="danger" onClick={this.handleCancel}>Close</Button>
+                        </div>
+                    ]}
+                >
+                   <Card style={{marginBottom:10}}>
+                       <Row style={{marginBottom:10}}>
+                           <Col span={8} style={{marginRight:10,width:480}}>
+                             <h4>Irb Name</h4>
+                               <Input >{newData.irbName}</Input>
+                           </Col>
+                           <Col span={8} style={{marginRight:10,width:480}}>
+                               <h4>Host Name</h4>
+                               <Input/>
+                           </Col>
+                           <Col span={8} style={{width:480}}>
+                               <h4>Region</h4>
+                               <Input/>
+                           </Col>
+                       </Row>
+                       <Row>
+                           <Col span={8} style={{marginRight:10,width:480}}>
+                               <h4>Irb Detail</h4>
+                               <Input/>
+                           </Col>
+                           <Col span={8} style={{marginRight:10,width:480}}>
+                               <h4>Type</h4>
+                               <Input/>
+                           </Col>
+                           <Col span={8} style={{width:480}}>
+                               <h4>Description</h4>
+                               <Input/>
+                           </Col>
+                       </Row>
+                   </Card>
+                    <Card style={{marginBottom:10}}>
+                     <Row>
+                         <Col span={12}>
+                             <Card title="Traffic Out">
+                                 Traffic Out</Card>
+                         </Col>
+                         <Col span={12}>
+                             <Card title="Traffic Out">
+                                 Traffic Out</Card>
+                         </Col>
+                </Row>
+                    </Card>
+
+                    <Card style={{marginBottom:10}}>
+                        <Row>
+                            <Col span={12}>
+                                <Card title="BGP V4">
+                                    <Row style={{marginBottom:10}}>
+                                        <Col span={8} style={{marginRight:20,width:200}}>
+                                            <h4>Irb Name</h4>
+                                            <Input/>
+                                        </Col>
+                                        <Col span={8} style={{marginRight:20,width:200}}>
+                                            <h4>IP</h4>
+                                            <Input/>
+                                        </Col>
+                                        <Col span={8} style={{width:200}}>
+                                            <h4>Accepted Prefix</h4>
+                                            <Input/>
+                                        </Col>
+                                    </Row>
+                                    <Row style={{marginBottom:10}}>
+                                        <Col span={8} style={{marginRight:20,width:200}}>
+                                            <h4>Host Name</h4>
+                                            <Input/>
+                                        </Col>
+                                        <Col span={8} style={{marginRight:20,width:200}}>
+                                            <h4>As</h4>
+                                            <Input/>
+                                        </Col>
+                                        <Col span={8} style={{width:200}}>
+                                            <h4>Host IP</h4>
+                                            <Input/>
+                                        </Col>
+                                    </Row>
+                                    <Row style={{marginBottom:10}}>
+                                        <Col span={8} style={{marginRight:20,width:200}}>
+                                            <h4>Group</h4>
+                                            <Input/>
+                                        </Col>
+                                        <Col span={8} style={{marginRight:20,width:200}}>
+                                            <h4>Advertised Prefix</h4>
+                                            <Input/>
+                                        </Col>
+                                        <Col span={8} style={{width:200}}>
+                                            <h4>Type</h4>
+                                            <Input/>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col span={8} style={{marginRight:20,width:200}}>
+                                            <h4>Import</h4>
+                                            <Input/>
+                                        </Col>
+                                        <Col span={8} style={{marginRight:20,width:200}}>
+                                            <h4>Export</h4>
+                                            <Input/>
+                                        </Col>
+
+                                    </Row>
+                                </Card>
+                            </Col>
+                            <Col span={12}>
+                                <Card title="BGP V6">
+                                    <Row style={{marginBottom:10}}>
+                                        <Col span={8} style={{marginRight:20,width:200}}>
+                                            <h4>Irb Name</h4>
+                                            <Input/>
+                                        </Col>
+                                        <Col span={8} style={{marginRight:20,width:200}}>
+                                            <h4>IP</h4>
+                                            <Input/>
+                                        </Col>
+                                        <Col span={8} style={{width:200}}>
+                                            <h4>Accepted Prefix</h4>
+                                            <Input/>
+                                        </Col>
+                                    </Row>
+                                    <Row style={{marginBottom:10}}>
+                                        <Col span={8} style={{marginRight:20,width:200}}>
+                                            <h4>Host Name</h4>
+                                            <Input/>
+                                        </Col>
+                                        <Col span={8} style={{marginRight:20,width:200}}>
+                                            <h4>As</h4>
+                                            <Input/>
+                                        </Col>
+                                        <Col span={8} style={{width:200}}>
+                                            <h4>Host IP</h4>
+                                            <Input/>
+                                        </Col>
+                                    </Row>
+                                    <Row style={{marginBottom:10}}>
+                                        <Col span={8} style={{marginRight:20,width:200}}>
+                                            <h4>Group</h4>
+                                            <Input/>
+                                        </Col>
+                                        <Col span={8} style={{marginRight:20,width:200}}>
+                                            <h4>Advertised Prefix</h4>
+                                            <Input/>
+                                        </Col>
+                                        <Col span={8} style={{width:200}}>
+                                            <h4>Type</h4>
+                                            <Input/>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col span={8} style={{marginRight:20,width:200}}>
+                                            <h4>Import</h4>
+                                            <Input/>
+                                        </Col>
+                                        <Col span={8} style={{marginRight:20,width:200}}>
+                                            <h4>Export</h4>
+                                            <Input/>
+                                        </Col>
+
+                                    </Row>
+                                </Card>
+                            </Col>
+                        </Row>
+                    </Card>
+                    <Card >
+                     <Card title="List Port Info">
+                         <Table/>
                      </Card>
+                    </Card>
+
+                </Modal>
             </IRBDetailWrapper>
         );
     }
 }
+
 export default IRBDetail;

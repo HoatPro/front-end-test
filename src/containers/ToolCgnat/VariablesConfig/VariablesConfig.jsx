@@ -1,19 +1,20 @@
 import React from "react";
-import { Table,Icon, Card } from 'antd';
-import {c} from "./VariablesConfig.style"
+import {Table, Icon, Card} from 'antd';
+import {VariablesConfigWrapper} from "./VariablesConfig.style"
 import axios from "axios";
 
 class VariablesConfig extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
-            dataTable:[],
+        this.state = {
+            dataTable: [],
             startValue: null,
             endValue: null,
             endOpen: false,
         }
     }
-    async componentDidMount(){
+
+    async componentDidMount() {
         const options = {
             method: "GET",
             url: "https://netd.ast.fpt.net/netd-api/api/variables-config"
@@ -22,21 +23,20 @@ class VariablesConfig extends React.Component {
             status,
             data: {data}
         } = await axios(options);
-        if(status){
+        if (status) {
             console.log(data);
-            let dataObject=data.map((dataObj,index)=>{
-                return{
-                    "index":index+1,
+            let dataObject = data.map((dataObj, index) => {
+                return {
+                    "index": index + 1,
                     dataObj
                 }
             })
             console.log(dataObject)
             this.setState({
-                dataTable:dataObject
+                dataTable: dataObject
             })
         }
     }
-
 
 
     render() {
@@ -49,7 +49,7 @@ class VariablesConfig extends React.Component {
             {
                 title: 'Name',
                 key: 'variables_name',
-                render:record=>{
+                render: record => {
                     return record.dataObj.variables_name
                 }
 
@@ -58,31 +58,31 @@ class VariablesConfig extends React.Component {
             {
                 title: 'Description',
                 key: 'variables_description',
-                render:record=>{
+                render: record => {
                     return record.dataObj.variables_description
                 }
             },
             {
                 title: 'Value',
                 key: 'variables_value',
-                render:record=>{
+                render: record => {
                     return record.dataObj.variables_value
                 }
             },
             {
                 title: 'Note',
                 key: 'Note',
-                render:record=>{
+                render: record => {
                     return record.dataObj.Note
                 }
             },
             {
                 title: 'Actions',
-                key:'actions',
-                render:record=>{
-                    return <div style={{width:28, height:28,backgroundColor:"#fbbd08",borderRadius:5}}>
-                                <Icon style={{margin:6,color:"white"}} type="edit" />
-                          </div>
+                key: 'actions',
+                render: record => {
+                    return <div style={{width: 28, height: 28, backgroundColor: "#fbbd08", borderRadius: 5}}>
+                        <Icon style={{margin: 6, color: "white"}} type="edit"/>
+                    </div>
                 }
 
             },
@@ -90,7 +90,7 @@ class VariablesConfig extends React.Component {
 
         ];
 
-        const { startValue, endValue, endOpen } = this.state;
+        const {startValue, endValue, endOpen} = this.state;
 
         return (
             <VariablesConfigWrapper>
@@ -98,7 +98,7 @@ class VariablesConfig extends React.Component {
                     <h2>VariablesConfig</h2>
                 </Card>
 
-                <Card style={{marginTop:10}}>
+                <Card style={{marginTop: 10}}>
 
                     <Table
                         id="table-detail"

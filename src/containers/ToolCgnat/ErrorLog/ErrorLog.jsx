@@ -1,20 +1,21 @@
 import React from "react";
-import { Table, DatePicker, Button,Card } from 'antd';
+import {Table, DatePicker, Button, Card} from 'antd';
 import {ErrorLogWrapper} from "./ErrorLog.style"
 import axios from "axios";
 
 
 class ErrorLog extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
-            dataTable:[],
+        this.state = {
+            dataTable: [],
             startValue: null,
             endValue: null,
             endOpen: false,
         }
     }
-    async componentDidMount(){
+
+    async componentDidMount() {
         const options = {
             method: "GET",
             url: "https://netd.ast.fpt.net/netd-api/api/error-logs-tool-cgnat"
@@ -23,25 +24,24 @@ class ErrorLog extends React.Component {
             status,
             data: {data}
         } = await axios(options);
-        if(status){
+        if (status) {
             console.log(data);
-            let dataObject=data.map((dataObj,index)=>{
-                return{
-                    "index":index+1,
+            let dataObject = data.map((dataObj, index) => {
+                return {
+                    "index": index + 1,
                     dataObj
                 }
 
 
-
             })
             this.setState({
-                dataTable:dataObject
+                dataTable: dataObject
             })
         }
     }
 
     disabledStartDate = startValue => {
-        const { endValue } = this.state;
+        const {endValue} = this.state;
         if (!startValue || !endValue) {
             return false;
         }
@@ -49,7 +49,7 @@ class ErrorLog extends React.Component {
     };
 
     disabledEndDate = endValue => {
-        const { startValue } = this.state;
+        const {startValue} = this.state;
         if (!endValue || !startValue) {
             return false;
         }
@@ -72,12 +72,12 @@ class ErrorLog extends React.Component {
 
     handleStartOpenChange = open => {
         if (!open) {
-            this.setState({ endOpen: true });
+            this.setState({endOpen: true});
         }
     };
 
     handleEndOpenChange = open => {
-        this.setState({ endOpen: open });
+        this.setState({endOpen: open});
     };
 
     render() {
@@ -90,7 +90,7 @@ class ErrorLog extends React.Component {
             {
                 title: 'Name',
                 key: 'device_name',
-                render:record=>{
+                render: record => {
                     return record.dataObj.device_name
                 }
 
@@ -99,42 +99,42 @@ class ErrorLog extends React.Component {
             {
                 title: 'Ip',
                 key: 'device_ip',
-                render:record=>{
+                render: record => {
                     return record.dataObj.device_ip
                 }
             },
             {
                 title: 'FPC Slot',
                 key: 'fpc_slot',
-                render:record=>{
+                render: record => {
                     return record.dataObj.fpc_slot
                 }
             },
             {
                 title: 'Pic Slot',
                 key: 'pic_slot',
-                render:record=>{
+                render: record => {
                     return record.dataObj.pic_slot
                 }
             },
             {
                 title: 'Card',
                 key: 'card',
-                render:record=>{
+                render: record => {
                     return record.dataObj.card
                 }
             },
             {
                 title: 'Log Message',
                 key: 'log_message',
-                render:record=>{
+                render: record => {
                     return record.dataObj.log_message
                 }
             },
             {
                 title: 'Timestamp',
-                key:'time_stamp',
-                render:record=>{
+                key: 'time_stamp',
+                render: record => {
                     // const data=new Date(record.dataObj.time_stamp);
                     return record.dataObj.time_stamp;
                 }
@@ -142,54 +142,54 @@ class ErrorLog extends React.Component {
             },
         ];
 
-        const { startValue, endValue, endOpen } = this.state;
+        const {startValue, endValue, endOpen} = this.state;
 
         return (
-         <ErrorLogWrapper>
-             <Card  style={{ width: "100%",fontWeight:600, marginBottom:10 }}>
-                 <div className="selection_date" style={{ marginBottom:20}}>
-                     <h2 style={{fontWeight:"640"}}>Error Log</h2>
-                     <div className="from_date" style={{ float:"left"}}>
-                         <h4 style={{fontWeight:"560"}}>From</h4>
-                         <DatePicker
-                             style={{marginRight:20}}
-                             disabledDate={this.disabledStartDate}
-                             showTime
-                             format="YYYY-MM-DD "
-                             value={startValue}
-                             placeholder="Start"
-                             onChange={this.onStartChange}
-                             onOpenChange={this.handleStartOpenChange}
-                         />
-                     </div>
-                     <div className="to_date">
-                         <h4 style={{fontWeight:"560"}}>To</h4>
-                         <DatePicker
-                             disabledDate={this.disabledEndDate}
-                             showTime
-                             format="YYYY-MM-DD "
-                             value={endValue}
-                             placeholder="End"
-                             onChange={this.onEndChange}
-                             open={endOpen}
-                             onOpenChange={this.handleEndOpenChange}
-                         />
-                     </div>
-                 </div>
-             </Card>
-                 <Card  style={{ width: "100%",marginBottom:20 }}>
-                 <Table
-                     style={{marginTop:20}}
-                     id="table-detail"
-                     className="table-detail"
-                     columns={columns}
-                     dataSource={this.state.dataTable}
-                     bordered
-                     // pagination={{ defaultPageSize: 20}}
-                     rowKey={record => record.index}
-                 />
-                 </Card>
-         </ErrorLogWrapper>
+            <ErrorLogWrapper>
+                <Card style={{width: "100%", fontWeight: 600, marginBottom: 10}}>
+                    <div className="selection_date" style={{marginBottom: 20}}>
+                        <h2 style={{fontWeight: "640"}}>Error Log</h2>
+                        <div className="from_date" style={{float: "left"}}>
+                            <h4 style={{fontWeight: "560"}}>From</h4>
+                            <DatePicker
+                                style={{marginRight: 20}}
+                                disabledDate={this.disabledStartDate}
+                                showTime
+                                format="YYYY-MM-DD "
+                                value={startValue}
+                                placeholder="Start"
+                                onChange={this.onStartChange}
+                                onOpenChange={this.handleStartOpenChange}
+                            />
+                        </div>
+                        <div className="to_date">
+                            <h4 style={{fontWeight: "560"}}>To</h4>
+                            <DatePicker
+                                disabledDate={this.disabledEndDate}
+                                showTime
+                                format="YYYY-MM-DD "
+                                value={endValue}
+                                placeholder="End"
+                                onChange={this.onEndChange}
+                                open={endOpen}
+                                onOpenChange={this.handleEndOpenChange}
+                            />
+                        </div>
+                    </div>
+                </Card>
+                <Card style={{width: "100%", marginBottom: 20}}>
+                    <Table
+                        style={{marginTop: 20}}
+                        id="table-detail"
+                        className="table-detail"
+                        columns={columns}
+                        dataSource={this.state.dataTable}
+                        bordered
+                        // pagination={{ defaultPageSize: 20}}
+                        rowKey={record => record.index}
+                    />
+                </Card>
+            </ErrorLogWrapper>
 
         )
     }

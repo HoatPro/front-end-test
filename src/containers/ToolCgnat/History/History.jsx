@@ -1,8 +1,9 @@
 import React from "react";
-import { Table, Card,Icon } from 'antd';
+import {Table, Card, Icon} from 'antd';
 import {HistoryWrapper} from "./History.style"
 import axios from "axios";
 import moment from "moment";
+
 const successMessage = ["success", "ok"];
 const errorMessage = ["fail", "error"];
 
@@ -26,23 +27,25 @@ function IconRow(props) {
             {include && (
                 <Icon
                     type={success ? "check" : "close"}
-                    style={{color: success ? "green" : "red", fontSize: '16px',fontWeight:800}}
+                    style={{color: success ? "green" : "red", fontSize: '16px', fontWeight: 800}}
                 />
-            )}  {message}
+            )} {message}
         </div>
     );
 }
+
 class History extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
-            dataTable:[],
+        this.state = {
+            dataTable: [],
             startValue: null,
             endValue: null,
             endOpen: false,
         }
     }
-    async componentDidMount(){
+
+    async componentDidMount() {
         const options = {
             method: "GET",
             url: "https://netd.ast.fpt.net/netd-api/api/histories-tool-cgnat"
@@ -51,21 +54,20 @@ class History extends React.Component {
             status,
             data: {data}
         } = await axios(options);
-        if(status){
+        if (status) {
             console.log(data);
-            let dataObject=data.map((dataObj,index)=>{
-                return{
-                    "index":index+1,
+            let dataObject = data.map((dataObj, index) => {
+                return {
+                    "index": index + 1,
                     dataObj
                 }
             })
             console.log(dataObject)
             this.setState({
-                dataTable:dataObject
+                dataTable: dataObject
             })
         }
     }
-
 
 
     render() {
@@ -78,7 +80,7 @@ class History extends React.Component {
             {
                 title: 'Name',
                 key: 'device_name',
-                render:record=>{
+                render: record => {
                     return record.dataObj.device_name
                 }
 
@@ -87,104 +89,104 @@ class History extends React.Component {
             {
                 title: 'Ip',
                 key: 'device_ip',
-                render:record=>{
+                render: record => {
                     return record.dataObj.device_ip
                 }
             },
             {
                 title: 'FPC Slot',
                 key: 'fpc_slot',
-                render:record=>{
+                render: record => {
                     return record.dataObj.fpc_slot
                 }
             },
             {
                 title: 'Pic Slot',
                 key: 'pic_slot',
-                render:record=>{
+                render: record => {
                     return record.dataObj.pic_slot
                 }
             },
             {
                 title: 'Card',
                 key: 'card',
-                render:record=>{
+                render: record => {
                     return record.dataObj.card
                 }
             },
             {
                 title: 'Status',
                 key: 'status',
-                render:record=>{
+                render: record => {
                     return record.dataObj.status
                 }
             },
             {
                 title: 'Message AOPT',
-                key:'msg_aopt',
-                render:record=>{
+                key: 'msg_aopt',
+                render: record => {
                     return record.dataObj.msg_aopt
                 }
 
             },
             {
                 title: 'Reason',
-                key:'reason',
-                render:record=>{
+                key: 'reason',
+                render: record => {
                     return record.dataObj.reason
                 }
 
             },
             {
                 title: 'Timestamp',
-                key:'time_stamp',
-                render:record=>{
-                    const time=record.dataObj.time_stamp
+                key: 'time_stamp',
+                render: record => {
+                    const time = record.dataObj.time_stamp
                     return moment(time).format("YYYY/MM/DD HH:mm:ss")
                 }
 
             },
             {
                 title: 'Uptime Result',
-                key:'uptime_result',
-                render:record=>{
-                    return  <IconRow data={ record.dataObj.uptime_result} />
+                key: 'uptime_result',
+                render: record => {
+                    return <IconRow data={record.dataObj.uptime_result}/>
                 }
             },
             {
                 title: 'Pre Jsnap Result',
-                key:'pre_jsnap_result',
-                render:record=>{
-                    return  <IconRow data={ record.dataObj.pre_jsnap_result} />
+                key: 'pre_jsnap_result',
+                render: record => {
+                    return <IconRow data={record.dataObj.pre_jsnap_result}/>
                 }
             },
             {
                 title: 'Action Result',
-                key:'action_result',
-                render:record=> {
+                key: 'action_result',
+                render: record => {
                     return <IconRow data={record.dataObj.action_result}/>
                 }
             },
             {
                 title: 'Post Jsnap Result',
-                key:'post_jsnap_result',
-                render:record=>{
+                key: 'post_jsnap_result',
+                render: record => {
                     return <IconRow data={record.dataObj.post_jsnap_result}/>
                 }
 
             },
             {
                 title: 'Compare Jsnap Result',
-                key:'compare_jsnap_result',
-                render:record=>{
+                key: 'compare_jsnap_result',
+                render: record => {
                     return <IconRow data={record.dataObj.compare_jsnap_result}/>
                 }
 
             },
             {
                 title: 'Pic State',
-                key:'pic_state',
-                render:record=>{
+                key: 'pic_state',
+                render: record => {
                     return <IconRow data={record.dataObj.pic_state}/>
                 }
 
@@ -193,29 +195,27 @@ class History extends React.Component {
 
         ];
 
-        const { startValue, endValue, endOpen } = this.state;
+        const {startValue, endValue, endOpen} = this.state;
 
         return (
             <HistoryWrapper>
-                <Card  style={{fontWeight:600, marginBottom:10 }}>
+                <Card style={{fontWeight: 600, marginBottom: 10}}>
                     <h2>History</h2>
                 </Card>
 
-              <Card  >
-                  <div >
-                      <Table
-                          scroll={{x:true}}
-                          columns={columns}
-                          dataSource={this.state.dataTable}
-                          bordered
-                          // pagination={{ defaultPageSize: 20}}
-                          rowKey={record => record.index}
-                      />
-                  </div>
-            </Card>
+                <Card>
+                    <div>
+                        <Table
+                            scroll={{x: true}}
+                            columns={columns}
+                            dataSource={this.state.dataTable}
+                            bordered
+                            // pagination={{ defaultPageSize: 20}}
+                            rowKey={record => record.index}
+                        />
+                    </div>
+                </Card>
             </HistoryWrapper>
-
-
 
 
         )

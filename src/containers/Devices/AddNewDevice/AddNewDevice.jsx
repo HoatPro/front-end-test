@@ -6,25 +6,31 @@ import Search from "antd/lib/input/Search";
 import TableFail from "../AddNewDevice/TableFail";
 import moment from "moment";
 import TableDetail from "../AddNewDevice/TableDetail";
-const dateFormat = 'DD-MM-YYYY';
-const {TabPane}=Tabs;
+
+const dateFormat = 'DD/MM/YYYY';
+const {TabPane} = Tabs;
+const {Option} = Select;
+
 class AddNewDevice extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
-            dataTable:[],
-            totalPortCnt:null,
-            totalSuccessPortCnt:null,
-            totalSuccessPortPercent:null,
-            dataGet:[],
-            dataLogs:[],
-            visible:false,
+        this.state = {
+            dataTable: [],
+            totalPortCnt: null,
+            totalSuccessPortCnt: null,
+            totalSuccessPortPercent: null,
+            dataGet: [],
+            dataDetail: [],
+            dataLogs: [],
+            visible: false,
+            timeList: [],
+            idSelected: null
         }
     }
 
     async componentDidMount() {
-        let today     = moment(new Date());
-        const todaySelected=today._d.toISOString();
+        let today = moment(new Date());
+        const todaySelected = today._d.toISOString();
         const options = {
             method: "GET",
             url: `https://netd.ast.fpt.net/netd-api/api/add-device-to-opsview-logs?date=${todaySelected}`
@@ -38,130 +44,187 @@ class AddNewDevice extends React.Component {
             const totalPortCnt = data.reduce((sum, e) => (sum + e.ports.length), 0);
             const totalSuccessPortCnt = data.reduce((sum, e) => (sum + e.ports.reduce((s, port) => (s + port.existInOps), 0)), 0);
             const totalSuccessPortPercent = Math.round(totalSuccessPortCnt / totalPortCnt * 100 * 100) / 100;
-            const dataObj=data.map((data,index)=>{
+            const dataFail = [];
+            const dataObj = data.map((data, index) => {
                 let successPortCnt = data.ports.reduce((sum, data) => (sum + data.existInOps), 0);
-                let successPercent = (data.ports.length!=0?(Math.round(successPortCnt / data.ports.length * 100 * 100) / 100):100);
+                let successPercent = (data.ports.length != 0 ? (Math.round(successPortCnt / data.ports.length * 100 * 100) / 100) : 100);
+                if (successPercent < 100) {
+                    dataFail.push(data)
+                }
                 return {
-                    index:index+1,
+                    index: index + 1,
                     data,
                     successPortCnt,
                     successPercent,
-                    length:data.ports.length
+                    length: data.ports.length
                 }
             })
+
             this.setState({
                 dataTable: dataObj,
-                totalPortCnt:totalPortCnt,
-                totalSuccessPortCnt:totalSuccessPortCnt,
-                totalSuccessPortPercent:totalSuccessPortPercent,
-                dataGet:data
+                dataDetail: dataObj,
+                totalPortCnt: totalPortCnt,
+                totalSuccessPortCnt: totalSuccessPortCnt,
+                totalSuccessPortPercent: totalSuccessPortPercent,
+                dataGet: data,
+                dataFail: dataFail,
+                timeList: this.getTimeList(data)
 
             })
-        }else {message.error("GET data Error!!!")}
+        } else {
+            message.error("GET data Error!!!")
+        }
     }
 
-    formatDate=(date)=> {
-        var d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            day = '' + d.getDate(),
-            year = d.getFullYear();
+    getTimeList(listData) {
+        const set = new Set();
 
-        if (month.length < 2) month = '0' + month;
-        if (day.length < 2) day = '0' + day;
+        for (let item of listData) {
+            set.add(item.time);
+        }
 
-        return [year, month, day].join('-');
-
+        return [...set];
     }
 
-    onChange=(dateString)=> {
+    onChangeDate = (dateString) => {
         var myDate = new Date(dateString._d);
-        const dateSelected = this.formatDate(myDate);
+        const dateSelected = myDate.toISOString();
         axios({
             method: "GET",
-            url: `https://netd.ast.fpt.net/netd-api/api/get-all-time-in-day?date=${dateSelected}`
+            url: `https://netd.ast.fpt.net/netd-api/api/add-device-to-opsview-logs?date=${dateSelected}`
         }).then(res => {
             if (res.status) {
-                const dataObj=res.data.data.map((dt,index)=>{
+                message.success("GET logs successfull!");
+                const data = res.data.data;
+                const totalPortCnt = data.reduce((sum, e) => (sum + e.ports.length), 0);
+                const totalSuccessPortCnt = data.reduce((sum, e) => (sum + e.ports.reduce((s, port) => (s + port.existInOps), 0)), 0);
+                const totalSuccessPortPercent = Math.round(totalSuccessPortCnt / totalPortCnt * 100 * 100) / 100;
+                const dataFail = [];
+                const dataObj = data.map((data, index) => {
+                    let successPortCnt = data.ports.reduce((sum, data) => (sum + data.existInOps), 0);
+                    let successPercent = (data.ports.length != 0 ? (Math.round(successPortCnt / data.ports.length * 100 * 100) / 100) : 100);
+                    if (successPercent < 100) {
+                        dataFail.push(data)
+                    }
                     return {
-                        "index":index,dt
+                        index: index + 1,
+                        data,
+                        successPortCnt,
+                        successPercent,
+                        length: data.ports.length
                     }
                 })
-                message.success("GET data successfully");
                 this.setState({
-                    listTime: dataObj
+                    dataTable: dataObj,
+                    totalPortCnt: totalPortCnt,
+                    totalSuccessPortCnt: totalSuccessPortCnt,
+                    totalSuccessPortPercent: totalSuccessPortPercent,
+                    dataGet: res.data.data,
+                    dataFail: dataFail,
+                    timeList: this.getTimeList(res.data.data)
+
                 })
+            } else {
+                message.error("GET data Error!!!")
             }
         })
 
     }
 
-    handleClick=(index)=>{
-        const {dataTable}=this.state;
-        const dataLogs=[];
-        dataTable.filter(data=>{
-            if(data.index==index){
-                dataLogs.push(data)
+    handleClick = (index) => {
+        const {dataGet} = this.state;
+
+    }
+    setVisible = (visiable) => {
+        this.setState({
+            visiable: visiable
+        })
+    }
+    // Change time
+    handleChangeTime = (date) => {
+        const {dataGet} = this.state;
+        const dataDetail = [];
+        dataGet.map(data => {
+            if (data.time == date) {
+                dataDetail.push(data)
             }
-        })
-        this.setState({
-            visiable:true,
-            dataLogs:dataLogs
-        })
-    }
-    setVisible=(visiable)=>{
-        this.setState({
-            visiable:visiable
-        })
-    }
-    render() {
-        const{dataTable,totalPortCnt,totalSuccessPortCnt,totalSuccessPortPercent,dataGet,dataLogs}=this.state;
-        const successPercentCheck=[]
-        dataGet.map((data,index)=>{
+        });
+        const totalPortCnt = dataDetail.reduce((sum, e) => (sum + e.ports.length), 0);
+        const totalSuccessPortCnt = dataDetail.reduce((sum, e) => (sum + e.ports.reduce((s, port) => (s + port.existInOps), 0)), 0);
+        const totalSuccessPortPercent = Math.round(totalSuccessPortCnt / totalPortCnt * 100 * 100) / 100;
+        const dataFail = [];
+        const dataObj = dataDetail.map((data, index) => {
             let successPortCnt = data.ports.reduce((sum, data) => (sum + data.existInOps), 0);
-            let successPercent = (data.ports.length!=0?(Math.round(successPortCnt / data.ports.length * 100 * 100) / 100):100);
-            successPercentCheck.push(successPercent)
+            let successPercent = (data.ports.length != 0 ? (Math.round(successPortCnt / data.ports.length * 100 * 100) / 100) : 100);
+            if (successPercent < 100) {
+                dataFail.push(data)
+            }
+            return {
+                index: index + 1,
+                data,
+                successPortCnt,
+                successPercent,
+                length: data.ports.length
+            }
+        })
+        this.setState({
+            dataTable: dataObj,
+            totalPortCnt: totalPortCnt,
+            totalSuccessPortCnt: totalSuccessPortCnt,
+            totalSuccessPortPercent: totalSuccessPortPercent,
+            dataFail: dataFail,
+        })
+    }
+
+    render() {
+        const {dataTable, totalPortCnt, totalSuccessPortCnt, totalSuccessPortPercent, dataFail, dataLogs, timeList} = this.state;
+        const listTime = [];
+        timeList.map((time, index) => {
+            listTime.push(
+                <Option key={time}>{moment(`${time}`).format("YYYY-MM-DD HH:mm:ss")}</Option>
+            )
         })
         const columns = [
             {
-                title: '#',
+                title: 'Index',
                 key: 'index',
-                render:record=>{
+                render: record => {
                     return record.index
                 }
             },
             {
                 title: 'Time',
                 key: 'time',
-                render:record=>{
-                    const times=record.data.time
+                render: record => {
+                    const times = record.data.time
                     return moment(times).format("YYYY-MM-DD HH:mm:ss")
                 }
             },
             {
                 title: 'Name',
                 key: 'name',
-                render:record=>{
+                render: record => {
                     return record.data.name
                 }
             },
             {
                 title: 'Ip',
                 key: 'deactive-time',
-                render:record=>{
+                render: record => {
                     return record.data.ip
                 }
             },
             {
                 title: 'Function',
                 key: 'function',
-                render:record=>{
+                render: record => {
                     return record.data.function
                 }
             },
             {
                 title: 'Method',
                 key: 'method',
-                render:record=>{
+                render: record => {
                     return record.data.method
                 }
             },
@@ -182,84 +245,103 @@ class AddNewDevice extends React.Component {
             {
                 title: 'Action',
                 key: 'action',
-                render:record=>{
-                    return(<div >
+                render: record => {
+                    return (<div>
                         <Icon
                             type="eye"
-                            style={{ width:26, height:26,backgroundColor:"#00b5ad",padding:5,color:"white",fontWeight:700,borderRadius:5,alignItems:"center"}}
-                            onClick={()=>this.handleClick(record.index)}
+                            style={{
+                                width: 26,
+                                height: 26,
+                                backgroundColor: "#00b5ad",
+                                padding: 5,
+                                color: "white",
+                                fontWeight: 700,
+                                borderRadius: 5,
+                                alignItems: "center"
+                            }}
+                            onClick={() => this.handleClick(record.index)}
                         />
-                        <Modal
-                            width={1200}
-                            closable={false}
-                            title={`Ports of device ${record.data.name} | ${record.data.ip}`}
-                            centered
-                            visible={this.state.visiable}
-                            footer={[
-                                <Button key={1} type="danger" onClick={() => this.setVisible(false)}>Close</Button>
-                            ]}
-                        >
-                            <TableDetail  data={dataLogs} />
-                        </Modal>
+
                     </div>)
                 }
             },
 
         ]
-
         return (
             <AddNewDeviceWrapper>
-                <Card  style={{ width: "100%",fontWeight:600, marginBottom:15 }}>
-                    <h2 style={{fontWeight:700}}>OPSVIEW</h2>
+                <Card style={{width: "100%", fontWeight: 600, marginBottom: 15}}>
+                    <h2 style={{fontWeight: 700}}>OPSVIEW</h2>
                     <h4> Add new device to opsview</h4>
-                    <Button style={{backgroundColor:"#21ba45",color:"white", fontWeight:560, float:"left",width:250}}> + Add </Button>
+                    <Button style={{
+                        backgroundColor: "#21ba45",
+                        color: "white",
+                        fontWeight: 560,
+                        float: "left",
+                        width: 250
+                    }}> + Add </Button>
                 </Card>
 
-                <Card  style={{ width: "100%" }}>
+                <Card style={{width: "100%"}}>
                     <h2>Logs</h2>
-                   <div style={{width:1200, marginBottom:100}}>
-                       <div style={{width:200, float:"left"}} >
-                           <h4>Choose log date</h4>
-                           <DatePicker
-                               onChange={this.onChange}
-                               format={dateFormat}
-                           />
-                       </div>
-                           <div  style={{width:200, float:"left"}}>
-                               <h4 > Search by name...</h4>
-                               <Search style={{width:180}} placeholder="Search by name..."/>
-                           </div>
+                    <div style={{width: 1200, marginBottom: 100}}>
+                        <div style={{width: 200, float: "left"}}>
+                            <h4>Choose log date</h4>
+                            <DatePicker
+                                onChange={this.onChangeDate}
+                                format={dateFormat}
+                                defaultValue={moment().subtract(0, 'days')}
+                            />
+                        </div>
+                        <div style={{width: 200, float: "left"}}>
+                            <h4> Search by name...</h4>
+                            <Search style={{width: 180}} placeholder="Search by name..."/>
+                        </div>
 
-                           <div style={{ width:200 ,float:"left"}}>
-                               <h4> Search by time</h4>
-                               <Select
-                                   style={{ width:180 }}
-                                   defaultValue={"all"}
-                                   onChange={this.handleChange}
-                               >
+                        <div style={{width: 200, float: "left"}}>
+                            <h4> Search by time</h4>
+                            <Select
+                                style={{width: 180}}
+                                defaultValue={"all"}
+                                onChange={this.handleChangeTime}
+                            >
+                                {listTime}
+                            </Select>
+                        </div>
 
-                               </Select>
-                           </div>
+                    </div>
 
-                   </div>
-
-                    <Tabs  type="card">
+                    <Tabs type="card">
                         <TabPane tab="Overview" key="1">
-                            <Alert style={{fontWeight:650,textAlign:"center",color:"#0e566c"}} message={`${totalSuccessPortCnt}/${totalPortCnt}(${totalSuccessPortPercent}%)`} type="info" />
+                            <Alert style={{fontWeight: 650, textAlign: "center", color: "#0e566c"}}
+                                   message={`${totalSuccessPortCnt}/${totalPortCnt}(${totalSuccessPortPercent}%)`}
+                                   type="info"/>
                             <Table
-                                style={{fontWeight:500,marginTop:10}}
+                                style={{fontWeight: 500, marginTop: 10}}
                                 columns={columns}
                                 dataSource={dataTable}
                                 bordered
-                                rowKey={record=>record.index}
+                                rowKey={record => record.index}
                             />
 
                         </TabPane>
                         <TabPane tab="Fail list" key="2">
-                            <TableFail  dataGet={dataGet} successPercentCheck={successPercentCheck}/>
+                            <TableFail dataFail={dataFail}/>
                         </TabPane>
 
                     </Tabs>
+
+                    <Modal
+                        width={1200}
+                        closable={false}
+                        // title={`Ports of device ${record.data.name} | ${record.data.ip}`}
+                        centered
+                        visible={this.state.visiable}
+                        footer={[
+                            <Button key={1} type="danger" onClick={() => this.setVisible(false)}>Close</Button>
+                        ]}
+                    >
+                        <TableDetail dataLogs={dataLogs}/>
+                    </Modal>
                 </Card>
             </AddNewDeviceWrapper>
         );
