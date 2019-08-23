@@ -21,10 +21,10 @@ class AddNewDevice extends React.Component {
             totalSuccessPortPercent: null,
             dataGet: [],
             dataDetail: [],
-            dataLogs: [],
             visible: false,
             timeList: [],
-            idSelected: null
+            idSelected: null,
+            dataModal:[]
         }
     }
 
@@ -116,6 +116,7 @@ class AddNewDevice extends React.Component {
                 })
                 this.setState({
                     dataTable: dataObj,
+                    dataDetail:dataObj,
                     totalPortCnt: totalPortCnt,
                     totalSuccessPortCnt: totalSuccessPortCnt,
                     totalSuccessPortPercent: totalSuccessPortPercent,
@@ -132,7 +133,19 @@ class AddNewDevice extends React.Component {
     }
 
     handleClick = (index) => {
-        const {dataGet} = this.state;
+
+        const { dataDetail } = this.state;
+        const dataModal = []
+        dataDetail.map(data => {
+            if (data.index == index) {
+                dataModal.push(data)
+            } else return null
+        })
+
+        this.setState({
+            visiable:true,
+            dataModal: dataModal
+        })
 
     }
     setVisible = (visiable) => {
@@ -177,7 +190,7 @@ class AddNewDevice extends React.Component {
     }
 
     render() {
-        const {dataTable, totalPortCnt, totalSuccessPortCnt, totalSuccessPortPercent, dataFail, dataLogs, timeList} = this.state;
+        const {dataTable, totalPortCnt, totalSuccessPortCnt, totalSuccessPortPercent, dataFail, dataModal, timeList} = this.state;
         const listTime = [];
         timeList.map((time, index) => {
             listTime.push(
@@ -340,7 +353,7 @@ class AddNewDevice extends React.Component {
                             <Button key={1} type="danger" onClick={() => this.setVisible(false)}>Close</Button>
                         ]}
                     >
-                        <TableDetail dataLogs={dataLogs}/>
+                        <TableDetail dataModal={dataModal}/>
                     </Modal>
                 </Card>
             </AddNewDeviceWrapper>

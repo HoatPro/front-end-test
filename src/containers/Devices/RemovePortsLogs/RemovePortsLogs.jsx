@@ -9,7 +9,7 @@ import TableDetail from "../RemovePortsLogs/TableDetail";
 
 const dateFormat = 'DD-MM-YYYY';
 const {TabPane} = Tabs;
-
+const {Option} = Select;
 class RemovePortsLogs extends React.Component {
     constructor(props) {
         super(props);
@@ -21,6 +21,8 @@ class RemovePortsLogs extends React.Component {
             dataGet: [],
             dataLogs: [],
             visible: false,
+            timeList: [],
+            dataMoDal:[]
 
         }
     }
@@ -65,63 +67,97 @@ class RemovePortsLogs extends React.Component {
             })
             this.setState({
                 dataTable: dataObj,
+                dataDetail: dataObj,
                 totalPortCnt: totalPortCnt,
                 totalSuccessPortCnt: totalSuccessPortCnt,
                 totalSuccessPortPercent: totalSuccessPortPercent,
-                dataGet: data
+                dataGet: data,
+                timeList: this.getTimeList(data)
 
             })
         } else {
             message.error("GET data Error!!!")
         }
     }
+    getTimeList(listData) {
+        const set = new Set();
 
-    // formatDate=(date)=> {
-    //     var d = new Date(date),
-    //         month = '' + (d.getMonth() + 1),
-    //         day = '' + d.getDate(),
-    //         year = d.getFullYear();
-    //
-    //     if (month.length < 2) month = '0' + month;
-    //     if (day.length < 2) day = '0' + day;
-    //
-    //     return [year, month, day].join('-');
-    //
-    // }
-    //
-    // onChange=(dateString)=> {
-    //     var myDate = new Date(dateString._d);
-    //     const dateSelected = this.formatDate(myDate);
-    //     axios({
-    //         method: "GET",
-    //         url: `https://netd.ast.fpt.net/netd-api/api/get-all-time-in-day?date=${dateSelected}`
-    //     }).then(res => {
-    //         if (res.status) {
-    //             const dataObj=res.data.data.map((dt,index)=>{
-    //                 return {
-    //                     "index":index,dt
-    //                 }
-    //             })
-    //             message.success("GET data successfully");
-    //             this.setState({
-    //                 listTime: dataObj
-    //             })
-    //         }
-    //     })
-    //
-    // }
+        for (let item of listData) {
+            set.add(item.time);
+        }
+
+        return [...set];
+    }
+
+
+    onChangeDate=(dateString)=> {
+        var myDate = new Date(dateString._d);
+        const dateSelected = myDate.toISOString();
+        console.log(dateSelected)
+        axios({
+            method: "GET",
+            url: `https://netd.ast.fpt.net/netd-api/api/remove-ports-from-opsview-logs?date=${dateSelected}`
+        }).then(res => {
+            if (res.status) {
+                message.success("GET logs successfull!");
+                const data=res.data.data
+                const totalPortCnt = data.reduce((sum, e) => (sum + e.ports.length), 0);
+                const totalSuccessPortCnt = data.reduce((sum, e) => (sum + e.ports.reduce((s, port) => {
+                    if (port.requestOpsviewResult != null && port.requestOpsviewResult.success) {
+                        return s + 1;
+                    }
+                    return s;
+                }, 0)), 0);
+                const totalSuccessPortPercent = Math.round(totalSuccessPortCnt / totalPortCnt * 100 * 100) / 100;
+                const dataFail = [];
+                const dataObj = data.map((data, index) => {
+                    let successPortCnt = data.ports.reduce((s, data) => {
+                        if (data.requestOpsviewResult != null && data.requestOpsviewResult.success) {
+                            return s + 1;
+                        }
+                        return s;
+                    }, 0);
+
+                    let successPercent = Math.round(successPortCnt / data.ports.length * 100 * 100) / 100;
+                    if (successPercent < 100) {
+                        dataFail.push(data)
+                    }
+                    return {
+                        index: index + 1,
+                        data,
+                        successPortCnt,
+                        successPercent,
+                        length: data.ports.length
+                    }
+                })
+                this.setState({
+                    dataTable: dataObj,
+                    dataDetail:dataObj,
+                    totalPortCnt: totalPortCnt,
+                    totalSuccessPortCnt: totalSuccessPortCnt,
+                    totalSuccessPortPercent: totalSuccessPortPercent,
+                    dataGet: res.data.data,
+                    dataFail: dataFail,
+                    timeList: this.getTimeList(res.data.data)
+                })
+            }else {
+                message.error("GET data Error!!!")
+            }
+        })
+
+    }
 
     handleClick = (index) => {
-        const {dataTable} = this.state;
-        const dataLogs = [];
-        dataTable.filter(data => {
+        const {dataDetail} = this.state;
+        const dataModal = [];
+        dataDetail.filter(data => {
             if (data.index == index) {
-                dataLogs.push(data)
+                dataModal.push(data)
             }
         })
         this.setState({
             visiable: true,
-            dataLogs: dataLogs
+            dataModal: dataModal
         })
     }
     setVisible = (visiable) => {
@@ -130,9 +166,61 @@ class RemovePortsLogs extends React.Component {
         })
     }
 
+    //Change Time
+    handleChangeTime = (date) => {
+        const {dataGet} = this.state;
+        const dataDetail = [];
+        dataGet.map(data => {
+            if (data.time == date) {
+                dataDetail.push(data)
+            }
+        });
+        const totalPortCnt = dataDetail.reduce((sum, e) => (sum + e.ports.length), 0);
+        const totalSuccessPortCnt = dataDetail.reduce((sum, e) => (sum + e.ports.reduce((s, port) => {
+            if (port.requestOpsviewResult != null && port.requestOpsviewResult.success) {
+                return s + 1;
+            }
+            return s;
+        }, 0)), 0);
+        const totalSuccessPortPercent = Math.round(totalSuccessPortCnt / totalPortCnt * 100 * 100) / 100;
+        const dataFail = [];
+        const dataObj = dataDetail.map((data, index) => {
+            let successPortCnt = data.ports.reduce((s, data) => {
+                if (data.requestOpsviewResult != null && data.requestOpsviewResult.success) {
+                    return s + 1;
+                }
+                return s;
+            }, 0);
+
+            let successPercent = Math.round(successPortCnt / data.ports.length * 100 * 100) / 100;
+            if (successPercent < 100) {
+                dataFail.push(data)
+            }
+            return {
+                index: index + 1,
+                data,
+                successPortCnt,
+                successPercent,
+                length: data.ports.length
+            }
+        })
+        this.setState({
+            dataTable: dataObj,
+            totalPortCnt: totalPortCnt,
+            totalSuccessPortCnt: totalSuccessPortCnt,
+            totalSuccessPortPercent: totalSuccessPortPercent,
+            dataFail: dataFail,
+        })
+    }
+
     render() {
-        const {dataGet, dataTable, totalPortCnt, totalSuccessPortCnt, totalSuccessPortPercent, dataLogs, visiable} = this.state;
-        console.log(dataLogs)
+        const { dataTable, totalPortCnt, totalSuccessPortCnt, totalSuccessPortPercent, dataModal,timeList,dataFail} = this.state;
+        const listTime = [];
+        timeList.map((time, index) => {
+            listTime.push(
+                <Option key={time}>{moment(`${time}`).format("YYYY-MM-DD HH:mm:ss")}</Option>
+            )
+        })
         const columns = [
             {
                 title: 'Index',
@@ -209,18 +297,7 @@ class RemovePortsLogs extends React.Component {
                             }}
                             onClick={() => this.handleClick(record.index)}
                         />
-                        <Modal
-                            width={1200}
-                            closable={false}
-                            title={`Ports of device ${record.data.name} | ${record.data.ip}`}
-                            centered
-                            visible={visiable}
-                            footer={[
-                                <Button key={1} type="danger" onClick={() => this.setVisible(false)}>Close</Button>
-                            ]}
-                        >
-                            <TableDetail data={dataLogs}/>
-                        </Modal>
+
                     </div>)
                 }
             },
@@ -236,8 +313,9 @@ class RemovePortsLogs extends React.Component {
                         <div style={{width: 200, float: "left"}}>
                             <h4>Choose log date</h4>
                             <DatePicker
-                                onChange={this.onChange}
+                                onChange={this.onChangeDate}
                                 format={dateFormat}
+                                defaultValue={moment().subtract(0, 'days')}
                             />
                         </div>
                         <div style={{width: 200, float: "left"}}>
@@ -250,9 +328,9 @@ class RemovePortsLogs extends React.Component {
                             <Select
                                 style={{width: 180}}
                                 defaultValue={"all"}
-                                onChange={this.handleChange}
+                                onChange={this.handleChangeTime}
                             >
-
+                                {listTime}
                             </Select>
                         </div>
 
@@ -273,10 +351,22 @@ class RemovePortsLogs extends React.Component {
 
                         </TabPane>
                         <TabPane tab="Fail list" key="2">
-                            <TableFail dataGet={dataGet}/>
+                            <TableFail dataFail={dataFail}/>
                         </TabPane>
 
                     </Tabs>
+                    <Modal
+                        width={1200}
+                        closable={false}
+                        // title={`Ports of device ${record.data.name} | ${record.data.ip}`}
+                        centered
+                        visible={this.state.visiable}
+                        footer={[
+                            <Button key={1} type="danger" onClick={() => this.setVisible(false)}>Close</Button>
+                        ]}
+                    >
+                        <TableDetail dataModal={dataModal}/>
+                    </Modal>
                 </Card>
             </RemovePortsLogsWrapper>
         );

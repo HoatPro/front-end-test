@@ -1,5 +1,5 @@
 import React from "react";
-import {Table, DatePicker, Select, Button, message, Card} from 'antd';
+import {Table, Alert} from 'antd';
 
 
 import moment from 'moment';
@@ -14,12 +14,12 @@ class TableFail extends React.Component {
         }
     }
 
-    componentDidMount(): void {
+    componentWillReceiveProps=(nextProps)=>{
 
         const portList = [];
-        const dataGet = this.props.dataGet
+        const dataFail = nextProps.dataFail
 
-        for (let device of dataGet) {
+        for (let device of dataFail) {
             for (let port of device.ports) {
                 if (!port.requestOpsviewResult || !port.requestOpsviewResult.success) {
                     portList.push({...port, device: device});
@@ -122,15 +122,27 @@ class TableFail extends React.Component {
                 }
             },
 
-        ]
-        return (
-            <div>
+        ];
+        const tableData = []
+        if (dataTable.length > 0) {
+            tableData.push(
                 <Table
                     style={{fontWeight: 500}}
                     bordered
                     dataSource={dataTable}
                     columns={columns}
                     rowKey={record => record.index}/>
+
+            )
+
+        } else {
+            tableData.push(
+                <Alert message="There is no existed items!" type="warning" style={{fontWeight: 650}}/>
+            )
+        }
+        return (
+            <div>
+                {tableData}
 
             </div>
 

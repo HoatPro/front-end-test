@@ -15,6 +15,7 @@ class LogoutLogs extends React.Component {
         super(props);
         this.state = {
             dataTable: [],
+            dataDetail:[],
             successCnt: null,
             successPercent: null,
             length: null,
@@ -47,6 +48,7 @@ class LogoutLogs extends React.Component {
                 })
                 this.setState({
                     dataTable: dataObj,
+                    dataDetail:dataObj,
                     successCnt: successCnt,
                     successPercent: successPercent,
                     length: res.data.length,
@@ -113,9 +115,9 @@ class LogoutLogs extends React.Component {
     //
 
     handleClick = (index) => {
-        const {dataTable} = this.state;
+        const {dataDetail} = this.state;
         const dataLogs = [];
-        dataTable.filter(data => {
+        dataDetail.map(data => {
             if (data.index == index) {
                 dataLogs.push(data)
             }
@@ -198,13 +200,15 @@ class LogoutLogs extends React.Component {
                 key: 'action',
                 render: record => {
                     return (<div>
-                        <Icon
-                            type="eye"
+                        <Button
+                            icon="eye"
+                            disabled={!(Array.isArray(record.data.users) && record.data.users.length != 0)}
                             style={{
                                 width: 26,
                                 height: 26,
                                 backgroundColor: "#00b5ad",
-                                padding: 5,
+                                margin: 0,
+                                padding:2,
                                 color: "white",
                                 fontWeight: 700,
                                 borderRadius: 5

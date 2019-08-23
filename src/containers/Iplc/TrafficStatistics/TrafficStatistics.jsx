@@ -2,6 +2,8 @@ import React from "react";
 import {Collapse, DatePicker, Select, Tabs, message, Alert, Table, Card, Row, Col} from 'antd';
 import {TrafficStatisticsWrapper} from "./TrafficStatistics.style";
 import TableAll from "./TableAll"
+import TablePremium from "./TablePremium";
+import TableGeneral from "./TableGeneral";
 import axios from "axios";
 import moment from 'moment';
 import Button from "antd/lib/button";
@@ -24,7 +26,8 @@ class TrafficStatistics extends React.Component {
             valueType: "All",
             valueProvider: "All",
             valueLocation: "All",
-            valueLocalLocation: "All"
+            valueLocalLocation: "All",
+            listA: []
         }
     }
 
@@ -47,57 +50,29 @@ class TrafficStatistics extends React.Component {
                     data
                 }
             });
+
+            const services = Array.from(new Set(data.trafficData.map(e => e.service)));
+            const types = Array.from(new Set(data.trafficData.map(e => e.type)));
+            const providers = Array.from(new Set(data.trafficData.map(e => e.provider)));
+            const locations = Array.from(new Set(data.trafficData.map(e => e.neighborLocation)));
+            const localLocations = Array.from(new Set(data.trafficData.map(e => e.localLocation)));
+            console.log(localLocations)
+            //
+            // let filteredList = listData;
+
             message.success("GET data IPLC traffic  successfull!")
             this.setState({
                 timeList: data.timeList,
                 maxTrafficTime: data.maxTrafficTime,
                 dataTable: dataObj,
                 dataAll: dataObj,
-                dataCheck: data
+                dataCheck: data,
+                listA: data
             })
         }
     }
 
-//Convert Data
-    filterList = (list, service = -1, type = -1, provider = -1, location = -1, localLocation = -1) => {
 
-        // params can be an array or single varible
-        return list.filter(e => {
-            return (service == -1 || e.service == service || (Array.isArray(service) && (service.includes(-1) || service.includes(e.service))))
-                && (type == -1 || e.type == type || (Array.isArray(type) && (type.includes(-1) || type.includes(e.type))))
-                && (provider == -1 || e.provider == provider || (Array.isArray(provider) && (provider.includes(-1) || provider.includes(e.provider))))
-                && (location == -1 || e.neighborLocation == location || (Array.isArray(location) && (location.includes(-1) || location.includes(e.neighborLocation))))
-                && (localLocation == -1 || e.localLocation == localLocation || (Array.isArray(localLocation) && (localLocation.includes(-1) || localLocation.includes(e.localLocation))));
-        });
-    };
-    getNewStateFromProps = () => {
-        const {dataCheck} = this.state;
-
-        const services = Array.from(new Set(dataCheck.map(e => e.service)));
-        const types = Array.from(new Set(dataCheck.map(e => e.type)));
-        const providers = Array.from(new Set(dataCheck.map(e => e.provider)));
-        const locations = Array.from(new Set(dataCheck.map(e => e.neighborLocation)));
-        const localLocations = Array.from(new Set(dataCheck.map(e => e.localLocation)));
-
-        let filteredList = dataCheck;
-
-        if (this.state && this.state.filterData) {
-            const filterData = this.state.filterData;
-            filteredList = this.filterList(dataCheck, filterData.service, filterData.type, filterData.provider, filterData.location, filterData.localLocation);
-        }
-        return {
-
-            list: dataCheck,
-            filteredList: filteredList,
-            services,
-            types,
-            locations,
-            providers,
-            localLocations,
-            selectedService: -1,
-            activeIndex: 0
-        }
-    }
     onChange = (value) => {
         const daySelected = moment(value._d).toISOString();
         axios({
@@ -118,7 +93,8 @@ class TrafficStatistics extends React.Component {
                     maxTrafficTime: dataGet.maxTrafficTime,
                     dataTable: dataObj,
                     dataAll: dataObj,
-                    dataCheck: dataGet
+                    dataCheck: dataGet,
+
                 })
             }
         })
@@ -134,7 +110,7 @@ class TrafficStatistics extends React.Component {
         }).then(res => {
             if (res.status) {
                 message.success("GET IPLC successfully!");
-                const dataGet = res.data.data;
+                const dataGet = res.data.data
                 const dataObj = dataGet.trafficData.map((data, index) => {
                     return {
                         index: index + 1,
@@ -146,7 +122,8 @@ class TrafficStatistics extends React.Component {
                     maxTrafficTime: dataGet.maxTrafficTime,
                     dataTable: dataObj,
                     dataAll: dataObj,
-                    dataCheck: dataGet
+                    dataCheck: dataGet,
+
                 })
             }
         })
@@ -228,21 +205,14 @@ class TrafficStatistics extends React.Component {
 
     }
 
-// Sum
-//     sumByAttr=(list, attr)=> {
-//
-//         // console.log(list);
-//
-//         let sum = 0;
-//         for (const item of list) {
-//             sum += item[attr];
-//         }
-//         return sum;
-//     }
+
     render() {
-        const {timeList, dataTable, maxTrafficTime} = this.state;
+
+        const {timeList, dataTable, maxTrafficTime, listA} = this.state;
+
+
+        // let sumTraffic = this.sumByAttr(this.filterList(list,"Premium", "submarine", -1, -1), 'trafficIn');
         const maxDate = moment(maxTrafficTime).format("YYYY-MM-DD hh:mm:ss");
-        console.log(maxDate)
         const selected = [];
         timeList.map((time, index) => {
             const timeNew = moment(time).format("YYYY-MM-DD hh:mm:ss")
@@ -374,13 +344,13 @@ class TrafficStatistics extends React.Component {
                         <Panel header="Overview" key="1" style={{fontWeight: 600}}>
                             <Tabs defaultActiveKey="1">
                                 <TabPane tab="All" key="all">
-                                    <TableAll/>
-                                </TabPane>
-                                <TabPane tab="General" key="general">
-                                    Content of Tab Pane 2
+                                    <TableAll listA={listA}/>
                                 </TabPane>
                                 <TabPane tab="Premium" key="premium">
-                                    Content of Tab Pane 3
+                                    <TablePremium listA={listA}/>
+                                </TabPane>
+                                <TabPane tab="General" key="general">
+                                    <TableGeneral listA={listA}/>
                                 </TabPane>
                             </Tabs>
                         </Panel>

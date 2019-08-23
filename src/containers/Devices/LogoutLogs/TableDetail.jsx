@@ -10,15 +10,24 @@ class TableDetail extends React.Component {
         }
     }
 
-    componentDidMount(): void {
-        const dataTable = this.props.data;
-        this.setState({
-            dataTable: dataTable
-        })
-    }
 
     render() {
-        const {dataTable} = this.state;
+
+        const dataLogs=this.props.data;
+        console.log(dataLogs)
+        const newData = [];
+        dataLogs.map(data => {
+            newData.push(data.data.users);
+        });
+        const dataObj = [];
+        newData.map(data => {
+            data.map((z, index) => {
+                dataObj.push({
+                    index: index + 1,
+                    z
+                });
+            });
+        });
         const columns = [
             {
                 title: 'Index',
@@ -30,7 +39,7 @@ class TableDetail extends React.Component {
                 render: record => {
                     return (<div>
                         {
-                            record.status ? <Icon type="check" style={{color: "green"}}/> :
+                            record.z.status ? <Icon type="check" style={{color: "green"}}/> :
                                 <Icon type="close" style={{color: "red"}}/>
                         }
                     </div>)
@@ -40,21 +49,21 @@ class TableDetail extends React.Component {
                 title: 'Name',
                 key: 'name',
                 render: record => {
-                    return record.data.users[0].name
+                    return record.z.name
                 }
             },
             {
                 title: 'TTY',
                 key: 'tty',
                 render: record => {
-                    return record.data.users[0].tty
+                    return record.z.tty
                 }
             },
             {
                 title: 'Time',
                 key: 'time',
                 render: record => {
-                    const times = record.data.time
+                    const times = record.z.time
                     return moment(times).format("YYYY-MM-DD HH:mm:ss")
                 }
             },
@@ -62,8 +71,7 @@ class TableDetail extends React.Component {
                 title: 'Error',
                 key: 'error',
                 render: record => {
-                    console.log(record)
-                    return record.data.users[0]._error
+                    return record.z._error
                 }
             },
         ];
@@ -72,7 +80,7 @@ class TableDetail extends React.Component {
             <Table
                 bordered
                 columns={columns}
-                dataSource={dataTable}
+                dataSource={dataObj}
                 pagination={false}
                 rowKey={record => record.index}
             />

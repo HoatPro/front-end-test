@@ -1,5 +1,5 @@
 import React from "react";
-import {Collapse, DatePicker, Select, Button, message, Card, Row, Col} from 'antd';
+import {Collapse, DatePicker, Select, Button, message, Card, Row, Col, Alert} from 'antd';
 import ReactEcharts from "echarts-for-react";
 import {TrafficChartWrapper} from "./TrafficChart.style"
 import axios from "axios";
@@ -7,7 +7,7 @@ import moment from 'moment';
 
 const {Panel} = Collapse;
 const {Option} = Select;
-const dateFormat = 'DD-MM-YYYY';
+const dateFormat = 'DD/MM/YYYY';
 
 class Chart extends React.Component {
     constructor(props) {
@@ -164,9 +164,11 @@ class Chart extends React.Component {
 class TrafficChart extends React.Component {
     constructor(props) {
         super(props);
+        const dataStart=moment().subtract(5, 'days');
+        const dataEnd=moment().subtract(0, 'days')
         this.state = {
-            startValue: null,
-            endValue: null,
+            startValue:dataStart ,
+            endValue: dataEnd,
             endOpen: false,
             dataGeneral: [],
             dataPremium: [],
@@ -271,24 +273,18 @@ class TrafficChart extends React.Component {
         })
 
     }
-    formatDate = (date) => {
-        var d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            day = '' + d.getDate(),
-            year = d.getFullYear();
-
-        if (month.length < 2) month = '0' + month;
-        if (day.length < 2) day = '0' + day;
-
-        return [day, month, year].join('/');
-
-    }
 
     render() {
         const {startValue, endValue, endOpen, dataGeneral, dataPremium, defaultActive} = this.state;
-        const today = moment(new Date())._d.toISOString();
-        const endDay = this.formatDate(today);
-        console.log(defaultActive)
+        const charts=[]
+
+        if(dataGeneral.length>0){
+            charts.push( <Chart data={dataGeneral} service='General'/>)
+        }else{
+            charts.push(  <Alert style={{fontWeight: 650, textAlign: "center", color: "#0e566c"}}
+                                 message={`No data to display`}
+                                 type="warning"/>)
+        }
         return (
             <TrafficChartWrapper>
                 <Card style={{border: "20", backgroundColor: "#f7f7f7", padding: 15}}>
@@ -303,23 +299,23 @@ class TrafficChart extends React.Component {
                                             style={{marginRight: 20}}
                                             disabledDate={this.disabledStartDate}
                                             format={dateFormat}
-                                            value={startValue}
+
+                                            defaultValue={moment().subtract(5, 'days')}
                                             placeholder="Start"
                                             onChange={this.onStartChange}
                                             onOpenChange={this.handleStartOpenChange}
-                                        />
+                                        >{startValue}</DatePicker>
                                     </div>
                                     <div className="to_date" style={{width: 180, float: "left"}}>
                                         <h4 style={{fontWeight: "560"}}>To</h4>
                                         <DatePicker
-
+                                            defaultValue={moment().subtract(0, 'days')}
                                             disabledDate={this.disabledEndDate}
                                             format={dateFormat}
-                                            value={endValue}
                                             onChange={this.onEndChange}
                                             open={endOpen}
                                             onOpenChange={this.handleEndOpenChange}
-                                        />
+                                        >{endValue}</DatePicker>
                                     </div>
                                 </Col>
                                 <Col span={8}>
@@ -408,10 +404,11 @@ class TrafficChart extends React.Component {
                 <Card style={{border: "20", backgroundColor: "#f7f7f7", marginTop: 20, padding: 15}}>
                     <h2>IPLC Traffic</h2>
                     <div>
-                        <Collapse defaultActiveKey={[`${defaultActive}`]}>
+                        <Collapse defaultActiveKey={[`1`,"2"]}>
                             <Panel header="General" key="1" style={{fontWeight: 600}}>
                                 <div>
-                                    <Chart data={dataGeneral} service='General'/>
+                                    {charts}
+
                                 </div>
                             </Panel>
                         </Collapse>
@@ -419,7 +416,7 @@ class TrafficChart extends React.Component {
                     </div>
                     <div>
                         <Collapse>
-                            <Panel header="Premium" key="premium" style={{fontWeight: 600}}>
+                            <Panel header="Premium" key="2" style={{fontWeight: 600}} >
                                 <div>
                                     <Chart data={dataPremium} service='Premium'/>
                                 </div>

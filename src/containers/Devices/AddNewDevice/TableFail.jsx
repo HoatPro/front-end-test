@@ -3,21 +3,9 @@ import {Table, Icon, Alert} from 'antd';
 import moment from 'moment';
 
 class TableFail extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            dataTable: [],
-
-        }
-    }
-
-    componentDidMount(): void {
-        console.log(this.props);
-    }
-
-    componentWillReceiveProps(nextProps) {
+    render() {
         const portList = [];
-        const dataFail = nextProps.dataFail;
+        const dataFail = this.props.dataFail;
         for (let device of dataFail) {
             for (let port of device.ports) {
                 if (!port.requestOpsviewResult || !port.requestOpsviewResult.success) {
@@ -31,13 +19,6 @@ class TableFail extends React.Component {
                 data
             }
         })
-        this.setState({
-            dataTable: dataObj,
-        })
-    }
-
-    render() {
-        const {dataTable} = this.state;
         const columns = [
             {
                 title: 'Index',
@@ -144,13 +125,13 @@ class TableFail extends React.Component {
             },
 
         ]
-        const tableData = []
-        if (dataTable.length > 0) {
+        const tableData = [];
+        if (dataObj.length > 0) {
             tableData.push(
                 <Table
                     style={{fontWeight: 500}}
                     bordered
-                    dataSource={dataTable}
+                    dataSource={dataObj}
                     columns={columns}
                     rowKey={record => record.index}/>
             )

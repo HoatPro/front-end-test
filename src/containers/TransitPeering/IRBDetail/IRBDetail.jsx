@@ -1,7 +1,8 @@
 import React from "react";
 import axios from "axios";
 import {message, DatePicker, Select, Card, Table, Col, Row, Modal, Icon, Button,Input} from "antd";
-import {IRBDetailWrapper} from "./IRBDetail.style"
+import {IRBDetailWrapper} from "./IRBDetail.style";
+import TableListPort from "./TableListPort"
 import moment from "moment";
 
 const dateFormat = 'DD/MM/YYYY';
@@ -15,7 +16,7 @@ class IRBDetail extends React.Component {
             dataSelected: [],
             dataTable: [],
             dataDetail:[],
-            visible: false
+            visible: false,
 
         }
     }
@@ -118,7 +119,6 @@ class IRBDetail extends React.Component {
                 return null
             }
         });
-        console.log(dataDetail);
         this.setState({
             visible: true,
             dataDetail:dataDetail
@@ -127,7 +127,6 @@ class IRBDetail extends React.Component {
     }
 
     handleCancel = (e) => {
-        console.log(e);
         this.setState({
             visible: false,
         });
@@ -219,8 +218,9 @@ class IRBDetail extends React.Component {
                 }
             }
         ]
-        const newData={}
-        dataDetail.map(data=>{
+        console.log(dataDetail);
+        const dataConvert=dataDetail.map(data=>{
+
             return {
                 name:data.dt.irbName,
                 hostName:data.dt.hostName,
@@ -228,9 +228,40 @@ class IRBDetail extends React.Component {
                 irbDetail:data.dt.irbDetail,
                 type:data.dt.type,
                 description:data.dt.description,
+                totalTrafficIn:data.dt.totalTrafficIn,
+                percentTrafficIn:data.dt.percentTrafficIn,
+                totalTrafficOut:data.dt.totalTrafficOut,
+                percentTrafficOut:data.dt.percentTrafficOut,
+
+                ipv4:data.dt.bgpV4.ip,
+                acceptedPrefixv4:data.dt.bgpV4.acceptedPrefix,
+                hostNamev4:data.dt.bgpV4.hostName,
+                asv4:data.dt.bgpV4.as,
+                hostIpv4:data.dt.bgpV4.hostIp,
+                groupv4:data.dt.bgpV4.group,
+                advertisedPrefixv4:data.dt.bgpV4.advertisedPrefix,
+                typev4:data.dt.bgpV4.type,
+                importv4:data.dt.bgpV4.import,
+                exportv4:data.dt.bgpV4.export,
+
+                ipv6:data.dt.bgpV6.ip,
+                acceptedPrefixv6:data.dt.bgpV6.acceptedPrefix,
+                hostNamev6:data.dt.bgpV6.hostName,
+                asv6:data.dt.bgpV6.as,
+                hostIpv6:data.dt.bgpV6.hostIp,
+                groupv6:data.dt.bgpV6.group,
+                advertisedPrefixv6:data.dt.bgpV6.advertisedPrefix,
+                typev6:data.dt.bgpV6.type,
+                importv6:data.dt.bgpV6.import,
+                exportv6:data.dt.bgpV6.export,
+
+                listPortInfo:data.dt.listPortInfo
+
+
             }
         })
-        console.log(newData)
+        console.log(dataConvert);
+
         return (
             <IRBDetailWrapper className="page-center">
                 <Card style={{width: "100%"}}>
@@ -279,172 +310,178 @@ class IRBDetail extends React.Component {
                         </div>
                     ]}
                 >
-                   <Card style={{marginBottom:10}}>
-                       <Row style={{marginBottom:10}}>
-                           <Col span={8} style={{marginRight:10,width:480}}>
-                             <h4>Irb Name</h4>
-                               <Input >{newData.irbName}</Input>
-                           </Col>
-                           <Col span={8} style={{marginRight:10,width:480}}>
-                               <h4>Host Name</h4>
-                               <Input/>
-                           </Col>
-                           <Col span={8} style={{width:480}}>
-                               <h4>Region</h4>
-                               <Input/>
-                           </Col>
-                       </Row>
-                       <Row>
-                           <Col span={8} style={{marginRight:10,width:480}}>
-                               <h4>Irb Detail</h4>
-                               <Input/>
-                           </Col>
-                           <Col span={8} style={{marginRight:10,width:480}}>
-                               <h4>Type</h4>
-                               <Input/>
-                           </Col>
-                           <Col span={8} style={{width:480}}>
-                               <h4>Description</h4>
-                               <Input/>
-                           </Col>
-                       </Row>
-                   </Card>
-                    <Card style={{marginBottom:10}}>
-                     <Row>
-                         <Col span={12}>
-                             <Card title="Traffic Out">
-                                 Traffic Out</Card>
-                         </Col>
-                         <Col span={12}>
-                             <Card title="Traffic Out">
-                                 Traffic Out</Card>
-                         </Col>
-                </Row>
-                    </Card>
+                    {dataConvert.map(data=>{
+                        return(
+                         <div>
+                             <Card style={{marginBottom:10}}>
+                                 <Row style={{marginBottom:10}}>
+                                     <Col span={8} style={{marginRight:10,width:480}}>
+                                         <h4>Irb Name</h4>
+                                         <Input value={data.name}/>
+                                     </Col>
+                                     <Col span={8} style={{marginRight:10,width:480}}>
+                                         <h4>Host Name</h4>
+                                         <Input value={data.hostName}/>
+                                     </Col>
+                                     <Col span={8} style={{width:480}}>
+                                         <h4>Region</h4>
+                                         <Input value={data.region}/>
+                                     </Col>
+                                 </Row>
+                                 <Row>
+                                     <Col span={8} style={{marginRight:10,width:480}}>
+                                         <h4>Irb Detail</h4>
+                                         <Input value={data.irbDetail}/>
+                                     </Col>
+                                     <Col span={8} style={{marginRight:10,width:480}}>
+                                         <h4>Type</h4>
+                                         <Input value={data.type}/>
+                                     </Col>
+                                     <Col span={8} style={{width:480}}>
+                                         <h4>Description</h4>
+                                         <Input value={data.description}/>
+                                     </Col>
+                                 </Row>
+                             </Card>
+                             <Card style={{marginBottom:10}}>
+                                 <Row>
+                                     <Col span={12}>
+                                         <Card title="Traffic In"  style={{ backgroundColor:"#FFFAF3"}}>
+                                             {data.totalTrafficIn} Mb ({data.percentTrafficIn.toFixed(2)}%){" "}</Card>
+                                     </Col>
+                                     <Col span={12}>
+                                         <Card title="Traffic Out" style={{backgroundColor:"#FCFFF5"}}>
+                                             {data.totalTrafficOut} Mb ({data.percentTrafficOut.toFixed(2)}%){" "}</Card>
+                                     </Col>
+                                 </Row>
+                             </Card>
 
-                    <Card style={{marginBottom:10}}>
-                        <Row>
-                            <Col span={12}>
-                                <Card title="BGP V4">
-                                    <Row style={{marginBottom:10}}>
-                                        <Col span={8} style={{marginRight:20,width:200}}>
-                                            <h4>Irb Name</h4>
-                                            <Input/>
-                                        </Col>
-                                        <Col span={8} style={{marginRight:20,width:200}}>
-                                            <h4>IP</h4>
-                                            <Input/>
-                                        </Col>
-                                        <Col span={8} style={{width:200}}>
-                                            <h4>Accepted Prefix</h4>
-                                            <Input/>
-                                        </Col>
-                                    </Row>
-                                    <Row style={{marginBottom:10}}>
-                                        <Col span={8} style={{marginRight:20,width:200}}>
-                                            <h4>Host Name</h4>
-                                            <Input/>
-                                        </Col>
-                                        <Col span={8} style={{marginRight:20,width:200}}>
-                                            <h4>As</h4>
-                                            <Input/>
-                                        </Col>
-                                        <Col span={8} style={{width:200}}>
-                                            <h4>Host IP</h4>
-                                            <Input/>
-                                        </Col>
-                                    </Row>
-                                    <Row style={{marginBottom:10}}>
-                                        <Col span={8} style={{marginRight:20,width:200}}>
-                                            <h4>Group</h4>
-                                            <Input/>
-                                        </Col>
-                                        <Col span={8} style={{marginRight:20,width:200}}>
-                                            <h4>Advertised Prefix</h4>
-                                            <Input/>
-                                        </Col>
-                                        <Col span={8} style={{width:200}}>
-                                            <h4>Type</h4>
-                                            <Input/>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col span={8} style={{marginRight:20,width:200}}>
-                                            <h4>Import</h4>
-                                            <Input/>
-                                        </Col>
-                                        <Col span={8} style={{marginRight:20,width:200}}>
-                                            <h4>Export</h4>
-                                            <Input/>
-                                        </Col>
+                             <Card style={{marginBottom:10}}>
+                                 <Row>
+                                     <Col span={12}>
+                                         <Card title="BGP V4">
+                                             <Row style={{marginBottom:10}}>
+                                                 <Col span={8} style={{marginRight:20,width:210}}>
+                                                     <h4>Irb Name</h4>
+                                                     <Input value={data.name}/>
+                                                 </Col>
+                                                 <Col span={8} style={{marginRight:20,width:210}}>
+                                                     <h4>IP</h4>
+                                                     <Input value={data.ipv4}/>
+                                                 </Col>
+                                                 <Col span={8} style={{width:210}}>
+                                                     <h4>Accepted Prefix</h4>
+                                                     <Input value={data.acceptedPrefixv4}/>
+                                                 </Col>
+                                             </Row>
+                                             <Row style={{marginBottom:10}}>
+                                                 <Col span={8} style={{marginRight:20,width:210}}>
+                                                     <h4>Host Name</h4>
+                                                     <Input value={data.hostNamev4}/>
+                                                 </Col>
+                                                 <Col span={8} style={{marginRight:20,width:210}}>
+                                                     <h4>As</h4>
+                                                     <Input value={data.asv4}/>
+                                                 </Col>
+                                                 <Col span={8} style={{width:210}}>
+                                                     <h4>Host IP</h4>
+                                                     <Input value={data.hostIpv4}/>
+                                                 </Col>
+                                             </Row>
+                                             <Row style={{marginBottom:10}}>
+                                                 <Col span={8} style={{marginRight:20,width:210}}>
+                                                     <h4>Group</h4>
+                                                     <Input value={data.groupv4}/>
+                                                 </Col>
+                                                 <Col span={8} style={{marginRight:20,width:210}}>
+                                                     <h4>Advertised Prefix</h4>
+                                                     <Input value={data.advertisedPrefixv4}/>
+                                                 </Col>
+                                                 <Col span={8} style={{width:210}}>
+                                                     <h4>Type</h4>
+                                                     <Input value={data.typev4}/>
+                                                 </Col>
+                                             </Row>
+                                             <Row>
+                                                 <Col span={8} style={{marginRight:20,width:210}}>
+                                                     <h4>Import</h4>
+                                                     <Input value={data.importv4}/>
+                                                 </Col>
+                                                 <Col span={8} style={{marginRight:20,width:210}}>
+                                                     <h4>Export</h4>
+                                                     <Input value={data.exportv4}/>
+                                                 </Col>
 
-                                    </Row>
-                                </Card>
-                            </Col>
-                            <Col span={12}>
-                                <Card title="BGP V6">
-                                    <Row style={{marginBottom:10}}>
-                                        <Col span={8} style={{marginRight:20,width:200}}>
-                                            <h4>Irb Name</h4>
-                                            <Input/>
-                                        </Col>
-                                        <Col span={8} style={{marginRight:20,width:200}}>
-                                            <h4>IP</h4>
-                                            <Input/>
-                                        </Col>
-                                        <Col span={8} style={{width:200}}>
-                                            <h4>Accepted Prefix</h4>
-                                            <Input/>
-                                        </Col>
-                                    </Row>
-                                    <Row style={{marginBottom:10}}>
-                                        <Col span={8} style={{marginRight:20,width:200}}>
-                                            <h4>Host Name</h4>
-                                            <Input/>
-                                        </Col>
-                                        <Col span={8} style={{marginRight:20,width:200}}>
-                                            <h4>As</h4>
-                                            <Input/>
-                                        </Col>
-                                        <Col span={8} style={{width:200}}>
-                                            <h4>Host IP</h4>
-                                            <Input/>
-                                        </Col>
-                                    </Row>
-                                    <Row style={{marginBottom:10}}>
-                                        <Col span={8} style={{marginRight:20,width:200}}>
-                                            <h4>Group</h4>
-                                            <Input/>
-                                        </Col>
-                                        <Col span={8} style={{marginRight:20,width:200}}>
-                                            <h4>Advertised Prefix</h4>
-                                            <Input/>
-                                        </Col>
-                                        <Col span={8} style={{width:200}}>
-                                            <h4>Type</h4>
-                                            <Input/>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col span={8} style={{marginRight:20,width:200}}>
-                                            <h4>Import</h4>
-                                            <Input/>
-                                        </Col>
-                                        <Col span={8} style={{marginRight:20,width:200}}>
-                                            <h4>Export</h4>
-                                            <Input/>
-                                        </Col>
+                                             </Row>
+                                         </Card>
+                                     </Col>
+                                     <Col span={12}>
+                                         <Card title="BGP V6">
+                                             <Row style={{marginBottom:10}}>
+                                                 <Col span={8} style={{marginRight:20,width:210}}>
+                                                     <h4>Irb Name</h4>
+                                                     <Input value={data.name}/>
+                                                 </Col>
+                                                 <Col span={8} style={{marginRight:20,width:210}}>
+                                                     <h4>IP</h4>
+                                                     <Input value={data.ipv6}/>
+                                                 </Col>
+                                                 <Col span={8} style={{width:210}}>
+                                                     <h4>Accepted Prefix</h4>
+                                                     <Input value={data.acceptedPrefixv6}/>
+                                                 </Col>
+                                             </Row>
+                                             <Row style={{marginBottom:10}}>
+                                                 <Col span={8} style={{marginRight:20,width:210}}>
+                                                     <h4>Host Name</h4>
+                                                     <Input value={data.hostNamev6}/>
+                                                 </Col>
+                                                 <Col span={8} style={{marginRight:20,width:210}}>
+                                                     <h4>As</h4>
+                                                     <Input value={data.asv6}/>
+                                                 </Col>
+                                                 <Col span={8} style={{width:210}}>
+                                                     <h4>Host IP</h4>
+                                                     <Input value={data.hostIpv6}/>
+                                                 </Col>
+                                             </Row>
+                                             <Row style={{marginBottom:10}}>
+                                                 <Col span={8} style={{marginRight:20,width:210}}>
+                                                     <h4>Group</h4>
+                                                     <Input value={data.groupv6}/>
+                                                 </Col>
+                                                 <Col span={8} style={{marginRight:20,width:210}}>
+                                                     <h4>Advertised Prefix</h4>
+                                                     <Input value={data.advertisedPrefixv6}/>
+                                                 </Col>
+                                                 <Col span={8} style={{width:210}}>
+                                                     <h4>Type</h4>
+                                                     <Input value={data.typev6}/>
+                                                 </Col>
+                                             </Row>
+                                             <Row>
+                                                 <Col span={8} style={{marginRight:20,width:210}}>
+                                                     <h4>Import</h4>
+                                                     <Input value={data.importv6}/>
+                                                 </Col>
+                                                 <Col span={8} style={{marginRight:20,width:210}}>
+                                                     <h4>Export</h4>
+                                                     <Input value={data.exportv6}/>
+                                                 </Col>
 
-                                    </Row>
-                                </Card>
-                            </Col>
-                        </Row>
-                    </Card>
-                    <Card >
-                     <Card title="List Port Info">
-                         <Table/>
-                     </Card>
-                    </Card>
+                                             </Row>
+                                         </Card>
+                                     </Col>
+                                 </Row>
+                             </Card>
+                             <Card >
+                                 <Card title="List Port Info">
+                                     <TableListPort  dataListPort={data.listPortInfo}/>
+                                 </Card>
+                             </Card>
+                         </div>
+                        )
+                    })}
 
                 </Modal>
             </IRBDetailWrapper>

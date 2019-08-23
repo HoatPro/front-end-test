@@ -10,50 +10,21 @@ class TableDetail extends React.Component {
         }
     }
 
-    componentWillReceiveProps = (nextProps) => {
-        console.log(this.props)
-        const dataTable = nextProps.dataLogs;
-
-        const newDataProps = []
-        dataTable.map(data => {
-            newDataProps.push(data.data.ports)
-        })
-        const dataObj = []
-        newDataProps.map(data => {
+    render() {
+        const dataModalGet = this.props.dataModal;
+        const newData = [];
+        dataModalGet.map(data => {
+            newData.push(data.data.ports);
+        });
+        const dataObj = [];
+        newData.map(data => {
             data.map((z, index) => {
                 dataObj.push({
                     index: index + 1,
                     z
-                })
-            })
+                });
+            });
         });
-        this.setState({
-            dataTable: dataObj
-        })
-    }
-
-    // componentDidMount(): void {
-    //     const dataTable = this.props.dataLogs;
-    //     const newData=[]
-    //     dataTable.map(data=>{
-    //         newData.push(data.data.ports)
-    //     })
-    //     const dataObj=[]
-    //     newData.map(data=>{
-    //         data.map((z,index)=>{
-    //             dataObj.push({
-    //                 index:index+1,
-    //                 z
-    //             })
-    //         })
-    //     });
-    //     this.setState({
-    //         dataTable:dataObj
-    //     })
-    // }
-
-    render() {
-        const {dataTable} = this.state;
         const columns = [
             {
                 title: 'Index',
@@ -88,16 +59,22 @@ class TableDetail extends React.Component {
                 title: 'Task ids',
                 key: 'task ids',
                 render: record => {
-                    const taskList = record.z.requestOpsviewResult;
-                    const z = [];
-                    taskList.map(task => {
-                        z.push(<div>{
-                            task.existed ?
-                                <Icon type="check" style={{color: "green"}}/> :
-                                <Icon type="close" style={{color: "red"}}/>
-                        } <b>{task.attributeLabel}:</b> {task.taskId}</div>)
-                    });
-                    return z
+                    const taskList = record.z;
+                    return (
+                        (taskList.requestOpsviewResult) ?
+                            taskList.requestOpsviewResult.map((e, idx) => (
+                                <div>
+                                    <div>
+                                        {
+                                            e.existed ?
+                                                <Icon type="check"  style={{color:"green"}} /> :
+                                                <Icon type="close" style={{color:"red"}}/>
+                                        } <b>{e.attributeLabel}:</b> {e.taskId}
+                                    </div>
+                                </div>
+                            )) : null
+                    )
+
                 }
 
             },
@@ -118,7 +95,7 @@ class TableDetail extends React.Component {
             <Table
                 bordered
                 columns={columns}
-                dataSource={dataTable}
+                dataSource={dataObj}
                 pagination={false}
                 rowKey={record => record.index}
             />
